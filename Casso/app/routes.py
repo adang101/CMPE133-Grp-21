@@ -4,10 +4,15 @@ bp = Blueprint('main', __name__)
 
 # Define views (routes) for your application
 
+# Path to landing page (index.html)
 @bp.route('/')
 def index():
     return render_template('index.html')
 
+# Path to login page (login.html)
+@bp.route('/login')
+def login():
+    return render_template('login.html')
 
 #@app.route('/about')
 #def about():
