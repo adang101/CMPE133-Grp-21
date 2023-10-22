@@ -1,6 +1,7 @@
-from flask import Flask, render_template
+from flask import render_template
+from app import create_app
 
-app = Flask("Casso")
+app = create_app()
 
 @app.route('/')
 def index():
