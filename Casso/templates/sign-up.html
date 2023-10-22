@@ -1,0 +1,74 @@
+<!--
+ CMPE 133 - Project: Casso
+  Group 21
+    Alvin Dang
+    Binh Vu
+    Jun Jie Lai
+    Lam Vong
+-->
+
+{% extends "base.html" %}
+
+{% block title %}Casso Sign Up{% endblock %}
+
+{% block content %}
+  <!-- Page Content -->
+  <div class="untree_co-section untree_co-section-4 pb-0"  id="portfolio-section">
+    <div class="container">
+      <div class="portfolio-single-wrap unslate_co--section" id="portfolio-single-section">
+
+        <div class="portfolio-single-inner">
+          <h2 class="heading-portfolio-single-h2 text-black">Create an account</h2>
+      
+          <!-- Main body -->
+          <!--<div class="untree_co-section" id="contact-section">-->
+            <div class="container">
+              
+              <!-- Sign Up Form -->
+              <div class="row">
+                <div class="col-lg-6">
+                  <!-- Form -->
+                  <form method="POST" action="">
+                    <div class="form-group">
+                      <!--<label for="full-name">Full Name</label>-->
+                      <input type="text" class="form-control" id="full-name" name="full-name" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                      <!--<label for="email">Email</label>-->
+                      <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                      <!--<label for="password">Password</label>-->
+                      <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    <div class="form-group">
+                      <!--<label for="check-password">Confirm Password</label>-->
+                      <input type="password" class="form-control" id="check-password" name="check-password" placeholder="Confirm your password" required>
+                    </div>
+                    <button type="submit" class="btn btn-black">Create an account</button>
+                    <div class="text-center mt-3">
+                      <div class="text-left">Already have an account? <a href="login">Login</a></div>
+                    </div>
+                  </form>
+                  <!-- End Form -->
+                </div>
+      
+                <!-- Image Placeholder -->
+                <div class="col-lg-6">
+                  <div id="map">
+                    <img src="{{ url_for('static', filename='images/elephant.jpeg') }}" class="lazyload  img-fluid" alt="Images" />
+                  </div>
+                </div>
+                <!-- END Image Placeholder -->
+              </div>
+              <!-- End Sign Up Form -->
+              
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Page Content-->
+
+{% endblock %}

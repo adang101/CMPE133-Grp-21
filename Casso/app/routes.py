@@ -14,6 +14,11 @@ def index():
 def login():
     return render_template('login.html')
 
+# Path to sign up page (sign-up.html)
+@bp.route('/sign-up')
+def sign_up():
+    return render_template('sign-up.html')
+
 #@app.route('/about')
 #def about():
 #    return render_template('about.html')
