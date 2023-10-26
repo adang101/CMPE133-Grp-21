@@ -12,11 +12,11 @@ engine = create_engine('sqlite:///Casso_database.db', echo=True)
 # stores user information such as username, email, and hashed password.
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    full_name = db.Column(db.String(80), nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     biography = db.Column(db.String(255))
-    gender = db.Column(db.String(10))
     
     # Relationship with posts
     posts = db.relationship('Post', backref='user', lazy=True)
