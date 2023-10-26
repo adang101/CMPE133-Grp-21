@@ -1,6 +1,7 @@
 from flask import render_template, Blueprint, request, redirect, url_for, flash, get_flashed_messages
 from flask_login import login_required, login_user, logout_user, current_user
 from .models import User, db
+from werkzeug.security import check_password_hash, generate_password_hash
 import re
 
 bp = Blueprint('main', __name__)
@@ -122,6 +123,41 @@ def sign_up_form():
 def profile():
     return render_template('profile.html')
 
+# Handle biography form submission
+@bp.route('/update-biography', methods=['POST'])
+@login_required
+def update_biography():
+    new_biography = request.form['biography']
+    current_user.biography = new_biography
+    db.session.commit()
+    flash('Your biography has been updated.')
+    return render_template('profile.html')
+
+# Handle password form submission
+@bp.route('/update-password', methods=['POST'])
+@login_required
+def update_password():
+    new_password = request.form['new_password']
+    check_password = request.form['current_password']
+    # Check if password and check password fields match
+    if not check_password_hash(current_user.password, check_password):
+        flash('Your current password was entered incorrectly. Please try again.')
+        return render_template('profile.html', messages=get_flashed_messages())
+    else:
+        # Check if confirm password is same as new password
+        confirm_password = request.form['confirm_password']
+        if confirm_password != new_password:
+            flash('Passwords do not match. Please try again.')
+            return render_template('profile.html', messages=get_flashed_messages())
+        else:
+            current_user.password = generate_password_hash(new_password)
+            db.session.commit()
+            flash('Your password has been updated.')
+            return render_template('profile.html', messages=get_flashed_messages())
+    
+
+
+# Path to logout page (logout.html) - Requires user to be logged in
 @bp.route("/logout")
 @login_required
 def logout():
