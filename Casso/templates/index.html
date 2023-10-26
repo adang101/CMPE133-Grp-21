@@ -23,8 +23,13 @@
             Medias newest social marketplace built for today's Artists. <strong>Join us today</strong> and embark on a journey where 
             <span class="text-primary"> every stroke, every click, and every connection </span>is a work of <strong>art</strong> in itself. <a href="https://untree.co/license" target="_blank"></a>
           </h2>
-          <!-- Main Login btn -->
-          <p class="gsap-reveal-hero"><a href="login" class="btn btn-outline-black">Login now</a></p>    
+          <!-- Main Login/Home Feed btn -->
+          <!-- Check if user is logged in-->
+          {% if current_user.is_authenticated %}
+          <p class="gsap-reveal-hero"><a href="home-feed" class="btn btn-outline-black">Home Feed</a></p> 
+          {% else %}
+          <p class="gsap-reveal-hero"><a href="login" class="btn btn-outline-black">Login now</a></p> 
+          {% endif %}   
         </div>
       </div>
       

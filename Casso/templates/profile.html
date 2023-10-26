@@ -13,69 +13,83 @@
 
 {% block content %}
   <!-- Page Content -->
+  <!-- Page Content -->
   <div class="untree_co-section untree_co-section-4 pb-0"  id="portfolio-section">
     <div class="container">
       <div class="portfolio-single-wrap unslate_co--section" id="portfolio-single-section">
+
         <div class="portfolio-single-inner">
           <h2 class="heading-portfolio-single-h2 text-black">Hi {{ current_user.full_name }}!</h2>
       
           <!-- Main body -->
-          <!--<div class="untree_co-section" id="contact-section">-->
-          <div class="container">
+            <div class="container">
               
               <!-- Flash messages -->
-                {% with messages = get_flashed_messages() %}
-                  {% if messages %}
-                    <ul class="flash-messages">
-                      {% for message in messages %}
-                        <li>{{ message }}</li>
-                      {% endfor %}
-                    </ul>
-                  {% endif %}
-                {% endwith %}
+              {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                  <ul class="flash-messages">
+                    {% for message in messages %}
+                      <li>{{ message }}</li>
+                    {% endfor %}
+                  </ul>
+                {% endif %}
+              {% endwith %}
+
+              <div class="row">
+                <div class="col-lg-6">
+                  <!-- Profile Information -->
+                  <h3 class="heading-portfolio-single-h3 text-black">Profile Information</h3>
+                  <p>{{ current_user.biography }}</p>
+                  <p>Full Name: {{ current_user.full_name }}</p>
+                  <p>Username: {{ current_user.username }}</p>
+                  <p>Password: {{ current_user.password }}</p>
+                  <p>Email: {{ current_user.email }}</p>
+                  <p>Member Since: {{ current_user.member_since }}</p>
+                  <!-- Forms -->
+                  
+                  <!-- Update Biography -->
+                  <form method="POST" action="update-biography">
+                    <div class="form-group">
+                      <label for="biography">Biography:</label>
+                      <textarea class="form-control" id="biography" name="biography"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Biography</button>
+                  </form>
+                  <br>
+
+                  <!-- Change Password -->
+                  <h3 class="heading-portfolio-single-h3 text-black">Change Password</h3>
+                  <form method="POST" action="update-password">
+                    <div class="form-group">
+                      <label for="current_password">Current Password:</label>
+                      <input type="password" class="form-control" id="current_password" name="current_password" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="new_password">New Password:</label>
+                      <input type="password" class="form-control" id="new_password" name="new_password" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="confirm_password">Confirm New Password:</label>
+                      <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Change Password</button>
+                  </form>
+
+                  <!-- End Forms -->
+                </div>
+      
+                <!-- Profile Picture Placeholder -->
+                <div class="col-lg-6">
+                  <div id="map">
+                    <!-- Profile picture -->
+                    <img src="{{ url_for('static', filename='images/profile.png') }}" alt="Profile Picture" class="profile-picture">
+                  </div>
+                </div>
+                <!-- END Placeholder -->
+              </div>
               
-              <!-- Profile picture -->
-              <img src="{{ url_for('static', filename='images/profile.png') }}" alt="Profile Picture" class="profile-picture">
-
-              <!-- Profile Information -->
-              <h3 class="heading-portfolio-single-h3 text-black">Profile Information</h3>
-              <p>{{ current_user.biography }}</p>
-              <p>Username: {{ current_user.username }}</p>
-              <p>Email: {{ current_user.email }}</p>
-              <p>Password: {{ current_user.password }}</p>
-              <p>Full Name: {{ current_user.full_name }}</p>
-              <p>Member Since: {{ current_user.member_since }}</p>
-
-
-              <form method="POST" action="update-biography">
-                <div class="form-group">
-                  <label for="biography">Biography:</label>
-                  <textarea class="form-control" id="biography" name="biography" rows="5">{{ current_user.biography }}</textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Update Biography</button>
-              </form>
-              <br>
-
-              <!-- Change Password -->
-              <h3 class="heading-portfolio-single-h3 text-black">Change Password</h3>
-              <form method="POST" action="change-password">
-                <div class="form-group">
-                  <label for="current_password">Current Password:</label>
-                  <input type="password" class="form-control" id="current_password" name="current_password" required>
-                </div>
-                <div class="form-group">
-                  <label for="new_password">New Password:</label>
-                  <input type="password" class="form-control" id="new_password" name="new_password" required>
-                </div>
-                <div class="form-group">
-                  <label for="confirm_password">Confirm New Password:</label>
-                  <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Change Password</button>
-
-              </form>
-
-          </div>
+              </div>
+            </div>
         </div>
       </div>
     </div>

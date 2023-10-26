@@ -140,7 +140,7 @@ def update_password():
     new_password = request.form['new_password']
     check_password = request.form['current_password']
     # Check if password and check password fields match
-    if not check_password_hash(current_user.password, check_password):
+    if check_password_hash(current_user.password, check_password):
         flash('Your current password was entered incorrectly. Please try again.')
         return render_template('profile.html', messages=get_flashed_messages())
     else:
@@ -150,36 +150,25 @@ def update_password():
             flash('Passwords do not match. Please try again.')
             return render_template('profile.html', messages=get_flashed_messages())
         else:
-            current_user.password = generate_password_hash(new_password)
+            current_user.password = new_password
             db.session.commit()
             flash('Your password has been updated.')
             return render_template('profile.html', messages=get_flashed_messages())
     
 
 
-# Path to logout page (logout.html) - Requires user to be logged in
-@bp.route("/logout")
+# Handle user sign out request - Requires user to be logged in
+@bp.route("/sign-out")
 @login_required
 def logout():
     logout_user()
     return render_template('index.html')
 
-#@app.route('/about')
-#def about():
-#    return render_template('about.html')
-
-# You can add more routes as needed for different parts of your application
-
-# For example, a routes that processes a form submission
-#@app.route('/submit', methods=['POST'])
-#def process_form():
- #   if request.method == 'POST':
-        # Process form data here
-        # You can access form data using request.form['fieldname']
-        # After processing, you can redirect to another page
-  #      return redirect(url_for('index'))
-
-# You can add more routes to handle various aspects of your application
+# Path to Home Feed (home-feed.html) - Requires user to be logged in
+@bp.route('/home-feed')
+@login_required
+def home_feed():
+    return render_template('home-feed.html')
 
 # Route to display a user's posts. Pass to template to display posts
 #@app.route('/user/<int:user_id>')
