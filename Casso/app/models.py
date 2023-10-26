@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy import MetaData, Table, Column, Integer, String, ForeignKey
 from datetime import datetime
-from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user
+from flask_login import UserMixin
 
 db = SQLAlchemy()
 
@@ -38,6 +38,15 @@ class User(UserMixin, db.Model):
     
     def get(user_id):
         return User.query.get(int(user_id))
+    
+    def is_authenticated(self):
+        return True
+    
+    def is_active(self):
+        return True
+    
+    def is_anonymous(self):
+        return False
 
     # Relationship with posts
     posts = db.relationship('Post', backref='user', lazy=True)

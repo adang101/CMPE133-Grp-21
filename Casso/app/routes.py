@@ -1,5 +1,5 @@
-from flask import render_template, Blueprint, request, redirect, url_for, flash, get_flashed_messages, login_user, login_required, logout_user, current_user
-from flask_login import login_required
+from flask import render_template, Blueprint, request, redirect, url_for, flash, get_flashed_messages
+from flask_login import login_required, login_user, logout_user, current_user
 from .models import User, db
 import re
 
@@ -121,6 +121,12 @@ def sign_up_form():
 @login_required
 def profile():
     return render_template('profile.html')
+
+@bp.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return render_template('index.html')
 
 #@app.route('/about')
 #def about():
