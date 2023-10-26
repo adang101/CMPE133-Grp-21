@@ -1,4 +1,5 @@
-from flask import render_template, Blueprint, request, redirect, url_for, flash
+from flask import render_template, Blueprint, request, redirect, url_for, flash, get_flashed_messages, login_user, login_required, logout_user, current_user
+from flask_login import login_required
 from .models import User, db
 import re
 
@@ -16,6 +17,35 @@ def index():
 def login():
     return render_template('login.html')
 
+# Handle login form submission
+@bp.route('/login-request', methods=['POST'])
+def login_form():
+    if request.method == 'POST':
+        # Get username and password from form
+        email = request.form['email']
+        password = request.form['password']
+
+        # Query the database to get the user with the username
+        user = User.query.filter_by(email=email).first()
+
+        # Check if the user exists in the database
+        if user is not None:
+            # If user exists, check if the password matches
+            if user.password == password:
+                # If password matches, log in user and being user session
+                flash('You were successfully logged in!')
+                login_user(user)
+
+                return render_template('index.html', messages=get_flashed_messages())
+            else:
+                # If password does not match, display message
+                flash('Incorrect password. Please try again.')
+                return render_template('login.html', messages=get_flashed_messages())
+        else:
+            # If email does not exist, display message
+            flash('Email does not exist. Please try again.')
+            return render_template('login.html', messages=get_flashed_messages())
+
 # Path to sign up page (sign-up.html)
 @bp.route('/sign-up')
 def sign_up():
@@ -30,37 +60,37 @@ def sign_up_form():
         # Create a new user object ID
         new_id = total_users + 1
 
-        new_full_name = request.form['full_name']
+        new_full_name = request.form['full-name']
         new_user = request.form['username']
         new_email = request.form['email']
         new_password = request.form['password']
-        check_password = request.form['check_password']
+        check_password = request.form['check-password']
 
         # Check if the username or email already exists in the database
         verify_username = User.query.filter_by(username=new_user).first()
         if verify_username is not None:
             flash('Username already exists. Please try again.')
-            return redirect(url_for('/sign-up'))
+            return render_template('sign-up.html', messages=get_flashed_messages())
 
         verify_email = User.query.filter_by(email=new_email).first()
         if verify_email is not None:
             flash('Email already exists. Please try again.')
-            return redirect(url_for('/sign-up'))
+            return render_template('sign-up.html', messages=get_flashed_messages())
 
         verify_full_name = User.query.filter_by(full_name=new_full_name).first()
         if verify_full_name is not None:
             flash('Full name already exists. Please try again.')
-            return redirect(url_for('/sign-up'))
+            return render_template('sign-up.html', messages=get_flashed_messages())
 
         # Check if email is in a valid format
         if not re.match(r"[^@]+@[^@]+\.[^@]+", request.form['email']):
             flash('Email is not in a valid format. Please enter a valid email address.')
-            return redirect(url_for('/sign-up'))
+            return render_template('sign-up.html', messages=get_flashed_messages())
         
         # Check if password and check password fields match
         if new_password != check_password:
             flash('Passwords do not match. Please try again.')
-            return redirect(url_for('/sign-up'))
+            return render_template('sign-up.html', messages=get_flashed_messages())
         
         # Create a new User object using form data and add to database
         new_user = User(id=new_id, 
@@ -79,12 +109,18 @@ def sign_up_form():
             # If user was added, display success message
             flash('Your account was successfully created!')
             # Redirect to login page
-            return redirect(url_for('/login'))
+            return render_template('login.html', messages=get_flashed_messages())
         else:
             # If user was not added, display message
             flash('There was an error creating your account. Please try again.')
             # Redirect to sign up page
-            return redirect(url_for('/sign-up'))
+            return render_template('sign-up.html', messages=get_flashed_messages())
+
+# Path to Profile view (profile.html) - Requires user to be logged in
+@bp.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html')
 
 #@app.route('/about')
 #def about():

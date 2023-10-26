@@ -64,8 +64,15 @@
 
         <ul class="js-clone-nav d-none d-lg-inline-none site-menu float-right site-nav-wrap">
           <li><a href="/" class="nav-link active">Home</a></li>
-          <li><a href="login" class="nav-link">Login</a></li>
-          <li><a href="sign-up" class="nav-link">Sign up</a></li>
+
+          <!-- Check if user is logged in-->
+          {% if current_user.is_authenticated %}
+            <li><a href="profile" class="nav-link">Profile</a></li>
+            <li><a href="sign-out" class="nav-link">Logout</a></li>
+          {% else %}
+            <li><a href="login" class="nav-link">Login</a></li>
+            <li><a href="sign-up" class="nav-link">Sign up</a></li>
+          {% endif %}
           <li class="has-children">
             <a href="/#about-section" class="nav-link">About Us</a>
             <ul class="dropdown">

@@ -1,0 +1,48 @@
+<!--
+ CMPE 133 - Project: Casso
+  Group 21
+    Alvin Dang
+    Binh Vu
+    Jun Jie Lai
+    Lam Vong
+-->
+
+{% extends "base.html" %}
+
+{% block title %}Casso Profile{% endblock %}
+
+{% block content %}
+  <!-- Page Content -->
+  <div class="untree_co-section untree_co-section-4 pb-0"  id="portfolio-section">
+    <div class="container">
+      <div class="portfolio-single-wrap unslate_co--section" id="portfolio-single-section">
+
+        <div class="portfolio-single-inner">
+          <h2 class="heading-portfolio-single-h2 text-black">Login</h2>
+      
+          <!-- Main body -->
+          <!--<div class="untree_co-section" id="contact-section">-->
+            <div class="container">
+              
+              <!-- Flash messages -->
+              {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                  <ul class="flash-messages">
+                    {% for message in messages %}
+                      <li>{{ message }}</li>
+                    {% endfor %}
+                  </ul>
+                {% endif %}
+              {% endwith %}
+
+              
+              
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Page Content-->
+
+{% endblock %}

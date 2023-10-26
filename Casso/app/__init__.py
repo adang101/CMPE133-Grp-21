@@ -5,7 +5,7 @@ def create_app():
     app = Flask("Casso")
 
     # Database configuration (if you are using a database)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Casso_database.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/alvindang/Documents/GitHub/CMPE133-Grp-21/Casso/Casso_database.db'
     db.init_app(app)
 
     # Register URL routes (in routes.py)

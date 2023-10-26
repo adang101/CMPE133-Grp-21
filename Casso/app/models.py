@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy import MetaData, Table, Column, Integer, String, ForeignKey
 from datetime import datetime
+from flask_login import UserMixin, LoginManager, login_user, login_required, logout_user, current_user
 
 db = SQLAlchemy()
 
@@ -10,14 +11,34 @@ engine = create_engine('sqlite:///Casso_database.db', echo=True)
 
 # User model to store user information
 # stores user information such as username, email, and hashed password.
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     full_name = db.Column(db.String(80), nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     biography = db.Column(db.String(255))
+
+    # Constructor
+    def __init__(self, id, full_name, username, email, password, biography=None):
+        self.id = id
+        self.full_name = full_name
+        self.username = username
+        self.email = email
+        self.password = password
+        self.biography = biography
+
+    # Required for administrative interface session will be managed by Flask-Login. You can use
+    #   current_user to check if a user is logged in, 
+    #   login_required decorator to restrict access / protect views that should only be 
+    #       accessible by logged in users,
+    #   logout_user to log users out when needed.
+    def get_id(self):
+        return super().get_id()
     
+    def get(user_id):
+        return User.query.get(int(user_id))
+
     # Relationship with posts
     posts = db.relationship('Post', backref='user', lazy=True)
 
@@ -29,13 +50,6 @@ class User(db.Model):
 
     # Likes relationship
     likes = db.relationship('Like', backref=db.backref('user', lazy='joined'), lazy='dynamic')
-
-    def __init__(self, username, password, email, biography=None, gender=None):
-        self.username = username
-        self.password = password
-        self.email = email
-        self.biography = biography
-        self.gender = gender
 
 # Post model to store user posts
 # One-to-many relationship with User model (Each user can have multiple posts)
