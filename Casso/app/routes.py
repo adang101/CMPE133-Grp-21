@@ -1,8 +1,9 @@
-from flask import render_template, Blueprint, request, redirect, url_for, flash, get_flashed_messages
+from flask import render_template, Blueprint, request, redirect, url_for, flash, get_flashed_messages, current_app as app
 from flask_login import login_required, login_user, logout_user, current_user
 from .models import User, db
 from werkzeug.security import check_password_hash, generate_password_hash
-import re
+import re, os
+from werkzeug.utils import secure_filename
 
 bp = Blueprint('main', __name__)
 
@@ -155,7 +156,32 @@ def update_password():
             flash('Your password has been updated.')
             return render_template('profile.html', messages=get_flashed_messages())
     
+# Handle profile picture form submission
+@bp.route('/upload-profile-picture', methods=['POST'])
+@login_required
+def upload_profile_picture():
+    if 'profile_picture' in request.files:
+        file = request.files['profile_picture']
 
+        if file.filename != '':
+            # Check if the file extension is allowed
+            if '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']:
+                # Generate a unique filename for the uploaded picture, e.g., based on the user's ID
+                filename = f"user_{current_user.id}_{secure_filename(file.filename)}"
+
+                # Ensure the upload folder exists
+                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                
+                # Save the file to a userPhotos folder in your static directory
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+                # Update the user's profile_picture field with the filename
+                current_user.profile_picture = filename
+                db.session.commit()
+            else:
+                flash('File type not allowed. Please upload a PNG, JPG, or JPEG file.')
+
+    return render_template('profile.html')
 
 # Handle user sign out request - Requires user to be logged in
 @bp.route("/sign-out")
@@ -168,7 +194,8 @@ def logout():
 @bp.route('/home-feed')
 @login_required
 def home_feed():
-    return render_template('home-feed.html')
+    page_name = 'Home Feed'
+    return render_template('home-feed.html', page_name=page_name)
 
 # Route to display a user's posts. Pass to template to display posts
 #@app.route('/user/<int:user_id>')

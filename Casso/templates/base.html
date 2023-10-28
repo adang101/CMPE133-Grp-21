@@ -61,10 +61,10 @@
       <!-- Navigation Bar -->
       <div class="site-navigation">
         <a href="/" class="logo m-0">CASSO<span class="text-primary">.</span></a>
-
+        <!-- Search Bar -->
+        <input type="text" class="search-box" placeholder="search">
         <ul class="js-clone-nav d-none d-lg-inline-none site-menu float-right site-nav-wrap">
           <li><a href="/" class="nav-link active">Home</a></li>
-
           <!-- Check if user is logged in-->
           {% if current_user.is_authenticated %}
             <li><a href="profile" class="nav-link">Profile</a></li>

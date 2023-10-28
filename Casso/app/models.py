@@ -18,15 +18,17 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     biography = db.Column(db.String(255))
+    profile_picture = db.Column(db.String(255), default='default.jpg')
 
     # Constructor
-    def __init__(self, id, full_name, username, email, password, biography=None):
+    def __init__(self, id, full_name, username, email, password, biography=None, profile_picture=None):
         self.id = id
         self.full_name = full_name
         self.username = username
         self.email = email
         self.password = password
         self.biography = biography
+        self.profile_picture = profile_picture
 
     # Required for administrative interface session will be managed by Flask-Login. You can use
     #   current_user to check if a user is logged in, 

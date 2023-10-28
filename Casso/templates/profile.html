@@ -82,10 +82,19 @@
                 <div class="col-lg-6">
                   <div id="map">
                     <!-- Profile picture -->
-                    <img src="{{ url_for('static', filename='images/profile.png') }}" alt="Profile Picture" class="profile-picture">
+                    <img src="{{ url_for('static', filename='images/userPhotos/' + current_user.profile_picture) }}" alt="Profile Picture" class="profile-picture">
                   </div>
                 </div>
                 <!-- END Placeholder -->
+                <!-- Add this form to allow users to upload a profile picture -->
+                <form method="POST" action="upload-profile-picture" enctype="multipart/form-data">
+                  <div class="form-group">
+                      <label for="profile_picture">Upload Profile Picture:</label>
+                      <input type="file" class="form-control-file" id="profile_picture" name="profile_picture">
+                  </div>
+                  <button type="submit" class="btn btn-primary">Upload Profile Picture</button>
+                </form>
+
               </div>
               
               </div>
