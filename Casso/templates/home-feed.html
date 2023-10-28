@@ -13,17 +13,17 @@
 
 {% block content %}
   <!-- Page Content -->
-  <div class="untree_co-section untree_co-section-4 pb-0"  id="portfolio-section">
+  <!--<div class="untree_co-section untree_co-section-4 pb-0"  id="portfolio-section">
     <div class="container">
       <div class="portfolio-single-wrap unslate_co--section" id="portfolio-single-section">
 
-        <div class="portfolio-single-inner">
+        <div class="portfolio-single-inner">-->
           <!-- Main body -->
-          <div class="container">
+          <!--<div class="container">
             <section class="main">
-              <div class="wrapper">
+              <div class="wrapper">-->
                 <!-- Post Cards -->
-                <div class="left-col">
+                <!--<div class="left-col">
         
                     <div class="post">
                         <div class="info">
@@ -53,35 +53,9 @@
                             <button class="comment-btn">post</button>
                         </div>
                     </div>
-                    <div class="post">
-                        <div class="info">
-                            <div class="user">
-                                <div class="profile-pic"><img src="img/cover 2.png" alt=""></div>
-                                <p class="username">modern_web_channel</p>
-                            </div>
-                            <img src="img/option.PNG" class="options" alt="">
-                        </div>
-                        <img src="img/cover 2.png" class="post-image" alt="">
-                        <div class="post-content">
-                            <div class="reaction-wrapper">
-                                <img src="img/like.PNG" class="icon" alt="">
-                                <img src="img/comment.PNG" class="icon" alt="">
-                                <img src="img/send.PNG" class="icon" alt="">
-                                <img src="img/save.PNG" class="save icon" alt="">
-                            </div>
-                            <p class="likes">1,012 likes</p>
-                            <p class="description"><span>username </span> Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur tenetur veritatis placeat, molestiae impedit aut provident eum quo natus molestias?</p>
-                            <p class="post-time">2 minutes ago</p>
-                        </div>
-                        <div class="comment-wrapper">
-                            <img src="img/smile.PNG" class="icon" alt="">
-                            <input type="text" class="comment-box" placeholder="Add a comment">
-                            <button class="comment-btn">post</button>
-                        </div>
-                    </div>
-                </div>
+                </div>-->
                 <!-- Recommendation Cards -->
-                <div class="right-col">
+                <!--<div class="right-col">
                   <div class="profile-card">
                       <div class="profile-pic">
                         <img src="{{ url_for('static', filename='images/userPhotos/' + current_user.profile_picture) }}" alt="Profile Picture" class="profile-picture">
@@ -150,7 +124,70 @@
         </div>
       </div>
     </div>
-  </div>
+  </div>-->
   <!-- End Page Content-->
 
+  <!-- Activity Galleria -->
+  <div class="untree_co-section untree_co-section-4 pb-0"  id="portfolio-section">
+    <div class="container">
+
+
+      <div class="relative"><div class="loader-portfolio-wrap"><div class="loader-portfolio"></div></div> </div>
+      <div id="portfolio-single-holder"></div>
+
+      <div class="portfolio-wrapper">
+
+        <div id="posts" class="row">
+          <!-- Image 1 -->
+          <div class="item web branding col-sm-6 col-md-6 col-lg-4 isotope-mb-2">
+            <a href="portfolio-single-1.html" class="portfolio-item ajax-load-page isotope-item gsap-reveal-img" data-id="1">
+              <div class="overlay">
+                <span class="wrap-icon icon-link2"></span>
+                <div class="portfolio-item-content">
+                  <h3>Minimalist Book</h3>
+                  <p>web, branding</p>
+                </div>
+              </div>
+              <img src="{{ url_for('static', filename='images/img_1.jpg') }}" class="lazyload  img-fluid" alt="Images" />
+              <div class="post-info">
+                <div class="post-user">
+                  <img src="{{ url_for('static', filename='images/profile_picture.jpg') }}" class="post-user-img" alt="Profile Picture" />
+                  <span class="post-username">Username</span>
+                </div>
+              </div>
+            </a>
+          </div>
+          
+          <!-- Image 2 -->
+          <div class="item web branding col-sm-6 col-md-6 col-lg-4 isotope-mb-2">
+            <a href="portfolio-single-2.html" class="portfolio-item ajax-load-page isotope-item gsap-reveal-img" data-id="2">
+              <div class="overlay">
+                <span class="wrap-icon icon-link2"></span>
+                <div class="portfolio-item-content">
+                  <h3>Book Binding</h3>
+                  <p>illustration, application</p>
+                </div>
+              </div>
+              <img src="{{ url_for('static', filename='images/img_2.jpg') }}" class="lazyload  img-fluid" alt="Images" />
+            </a>
+          </div>
+
+          <!-- Image 3 -->
+          <div class="item web branding col-sm-6 col-md-6 col-lg-4 isotope-mb-2">
+            <a href="portfolio-single-3.html" class="portfolio-item ajax-load-page isotope-item gsap-reveal-img" data-id="3">
+              <div class="overlay">
+                <span class="wrap-icon icon-link2"></span>
+                <div class="portfolio-item-content">
+                  <h3>Fresh Fruits</h3>
+                  <p>web, branding</p>
+                </div>
+              </div>
+              <img src="{{ url_for('static', filename='images/img_3.jpg') }}" class="lazyload  img-fluid" alt="Images" />
+            </a>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  <!-- END Activity Galleria -->
 {% endblock %}
