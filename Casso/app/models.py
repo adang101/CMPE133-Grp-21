@@ -52,24 +52,23 @@ class User(UserMixin, db.Model):
 
     # Relationship with posts
     posts = db.relationship('Post', backref='user', lazy=True)
-
     # Relationships to followers and following
-    followers = db.relationship('Follower', foreign_keys='Follower.followed_id', 
-                                backref='followed', lazy='dynamic')
-    following = db.relationship('Follower', foreign_keys='Follower.follower_id', 
-                                backref='follower', lazy='dynamic')
+    #followers = db.relationship('Follower', foreign_keys='Follower.followed_id', 
+    #                            backref='followed', lazy='dynamic')
+    #following = db.relationship('Follower', foreign_keys='Follower.follower_id', 
+    #                            backref='follower', lazy='dynamic')
 
     # Likes relationship
-    likes = db.relationship('Like', backref=db.backref('user', lazy='joined'), lazy='dynamic')
+    #likes = db.relationship('Like', backref=db.backref('user', lazy='joined'), lazy='dynamic')
 
 # Post model to store user posts
 # One-to-many relationship with User model (Each user can have multiple posts)
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
     image = db.Column(db.String(255), nullable=False)
-    caption = db.Column(db.String(255))
-    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Comments relationship
     comments = db.relationship('Comment', backref=db.backref('post', lazy='joined'), lazy='dynamic')

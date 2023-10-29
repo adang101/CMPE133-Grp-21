@@ -1,6 +1,6 @@
 from flask import render_template, Blueprint, request, redirect, url_for, flash, get_flashed_messages, current_app as app
 from flask_login import login_required, login_user, logout_user, current_user
-from .models import User, db
+from .models import User, db, Post
 from werkzeug.security import check_password_hash, generate_password_hash
 import re, os
 from werkzeug.utils import secure_filename
@@ -171,7 +171,7 @@ def upload_profile_picture():
 
                 # Ensure the upload folder exists
                 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-                
+
                 # Save the file to a userPhotos folder in your static directory
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
@@ -195,7 +195,33 @@ def logout():
 @login_required
 def home_feed():
     page_name = 'Home Feed'
-    return render_template('home-feed.html', page_name=page_name)
+    #return render_template('home-feed.html', page_name=page_name)
+    posts = Post.query.all()
+    return render_template('home-feed.html', posts=posts, page_name=page_name)
+
+# Handle create post form submission
+@bp.route('/create-post', methods=['POST'])
+@login_required
+def create_post():
+    if request.method == 'POST':
+        title = request.form['title']
+        image = request.files['image']
+
+        # Check if the file extension is allowed
+        if image and '.' in image.filename and image.filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']:
+            filename = secure_filename(image.filename)
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'userPosts', filename)
+            image.save(image_path)
+
+            new_post = Post(title=title, image=filename, user_id=current_user.id)
+            db.session.add(new_post)
+            db.session.commit()
+            flash('Post created successfully.')
+        else:
+            flash('Invalid file format. Please upload a valid image.')
+        
+        render_template('home-feed.html')
+
 
 # Route to display a user's posts. Pass to template to display posts
 #@app.route('/user/<int:user_id>')
