@@ -199,6 +199,12 @@ def home_feed():
     posts = Post.query.all()
     return render_template('home-feed.html', posts=posts, page_name=page_name)
 
+# Path to create a post page (create-page.html) - Requires user to be logged in
+@bp.route('/create-page')
+@login_required
+def create_page():
+    return render_template('create-page.html')
+
 # Handle create post form submission
 @bp.route('/create-post', methods=['POST'])
 @login_required

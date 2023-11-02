@@ -51,7 +51,7 @@ class User(UserMixin, db.Model):
         return False
 
     # Relationship with posts
-    posts = db.relationship('Post', backref='user', lazy=True)
+    post = db.relationship('Post', backref='user', lazy=True)
     # Relationships to followers and following
     #followers = db.relationship('Follower', foreign_keys='Follower.followed_id', 
     #                            backref='followed', lazy='dynamic')
@@ -68,18 +68,12 @@ class Post(db.Model):
     title = db.Column(db.String(255), nullable=False)
     image = db.Column(db.String(255), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
+    created_at = db.Column(db.TIMESTAMP, default=db.func.current_timestamp())
     # Comments relationship
-    comments = db.relationship('Comment', backref=db.backref('post', lazy='joined'), lazy='dynamic')
+    #comments = db.relationship('Comment', backref=db.backref('post', lazy='joined'), lazy='dynamic')
 
     # Likes relationship
-    likes = db.relationship('Like', backref=db.backref('post', lazy='joined'), lazy='dynamic')
-
-    def __init__(self, image, caption, user_id):
-        self.image = image
-        self.caption = caption
-        self.user_id = user_id
+    #likes = db.relationship('Like', backref=db.backref('post', lazy='joined'), lazy='dynamic')
 
 # Follower model to store user followers and following
 # Many-to-many relationship with User model (Each user can follow multiple users and be followed by multiple users)

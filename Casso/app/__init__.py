@@ -8,6 +8,10 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/alvindang/Documents/GitHub/CMPE133-Grp-21/Casso/Casso_database.db'
     db.init_app(app)
 
+    # Create the database tables (if they do not exist)
+    with app.app_context():
+        db.create_all()
+
     # Configure the upload folder and allowed extensions
     app.config['UPLOAD_FOLDER'] = '/Users/alvindang/Documents/GitHub/CMPE133-Grp-21/Casso/static/images/userPhotos'
     app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg'}
