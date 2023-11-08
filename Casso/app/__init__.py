@@ -13,7 +13,8 @@ def create_app():
         db.create_all()
 
     # Configure the upload folder and allowed extensions
-    app.config['UPLOAD_FOLDER'] = '/Users/alvindang/Documents/GitHub/CMPE133-Grp-21/Casso/static/images/userPhotos'
+    app.config['UPLOAD_FOLDER_PROFILE_PICS'] = '/Users/alvindang/Documents/GitHub/CMPE133-Grp-21/Casso/static/images/userPhotos'
+    app.config['UPLOAD_FOLDER_POSTS'] = '/Users/alvindang/Documents/GitHub/CMPE133-Grp-21/Casso/static/images/userPosts'
     app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg'}
     
     # Register URL routes (in routes.py)

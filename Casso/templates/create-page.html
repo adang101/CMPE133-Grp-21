@@ -35,21 +35,21 @@
                 {% endif %}
               {% endwith %}
 
-              <!-- Login Form -->
+              <!-- Create a Post Form -->
               <div class="row">
                 <div class="col-lg-6">
                   <!-- Form -->
-                  <form method="POST" action="login-request">
+                  <form method="POST" action="create-post" enctype="multipart/form-data">
                     <div class="form-group">
-                      <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                      <label for="title"></label>
+                      <input type="text" class="form-control" id="title" name="title" placeholder="Title" required>
                     </div>
                     <div class="form-group">
-                      <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                      <!--<label for="image">Image</label>-->
+                      <input type="file" class="form-controls" id="image" name="image" required>
                     </div>
-                    <button type="submit" class="btn btn-black">Login</button>
-                    <div class="text-center mt-3">
-                      <div class="text-left">Don't have an account? <a href="sign-up">Sign up</a></div>
-                    </div>
+
+                    <button type="submit" class="btn btn-black">Create Post</button>
                   </form>
                   <!-- End Form -->
                 </div>

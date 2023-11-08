@@ -12,125 +12,9 @@
 {% block title %}Casso Feed{% endblock %}
 
 {% block content %}
-  <!-- Page Content -->
-  <!--<div class="untree_co-section untree_co-section-4 pb-0"  id="portfolio-section">
-    <div class="container">
-      <div class="portfolio-single-wrap unslate_co--section" id="portfolio-single-section">
-
-        <div class="portfolio-single-inner">-->
-          <!-- Main body -->
-          <!--<div class="container">
-            <section class="main">
-              <div class="wrapper">-->
-                <!-- Post Cards -->
-                <!--<div class="left-col">
-        
-                    <div class="post">
-                        <div class="info">
-                            <div class="user">
-                                <div class="profile-pic">
-                                    <img src="" alt="">
-                                </div>
-                                <p class="username">modern_web_channel</p>
-                            </div>
-                            <img src="" class="options" alt="">
-                        </div>
-                        <img src="" class="post-image" alt="">
-                        <div class="post-content">
-                            <div class="reaction-wrapper">
-                                <img src="img/like.PNG" class="icon" alt="">
-                                <img src="img/comment.PNG" class="icon" alt="">
-                                <img src="img/send.PNG" class="icon" alt="">
-                                <img src="img/save.PNG" class="save icon" alt="">
-                            </div>
-                            <p class="likes">1,012 likes</p>
-                            <p class="description"><span>username </span> Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur tenetur veritatis placeat, molestiae impedit aut provident eum quo natus molestias?</p>
-                            <p class="post-time">2 minutes ago</p>
-                        </div>
-                        <div class="comment-wrapper">
-                            <img src="img/smile.PNG" class="icon" alt="">
-                            <input type="text" class="comment-box" placeholder="Add a comment">
-                            <button class="comment-btn">post</button>
-                        </div>
-                    </div>
-                </div>-->
-                <!-- Recommendation Cards -->
-                <!--<div class="right-col">
-                  <div class="profile-card">
-                      <div class="profile-pic">
-                        <img src="{{ url_for('static', filename='images/userPhotos/' + current_user.profile_picture) }}" alt="Profile Picture" class="profile-picture">
-                      </div>
-                      <div>
-                          <p class="username">{{ current_user.username }}</p>
-                          <p class="sub-text">{{ current_user.full_name }}</p>
-                      </div>
-                      <button class="action-btn">switch</button>
-                  </div>
-                  <p class="suggestion-text">Suggestions for you</p>
-                  <div class="profile-card">
-                      <div class="profile-pic">
-                          <img src="img/cover 9.png" alt="">
-                      </div>
-                      <div>
-                          <p class="username">modern_web_channel</p>
-                          <p class="sub-text">followed bu user</p>
-                      </div>
-                      <button class="action-btn">follow</button>
-                  </div>
-                  <div class="profile-card">
-                      <div class="profile-pic">
-                          <img src="img/cover 10.png" alt="">
-                      </div>
-                      <div>
-                          <p class="username">modern_web_channel</p>
-                          <p class="sub-text">followed bu user</p>
-                      </div>
-                      <button class="action-btn">follow</button>
-                  </div>
-                  <div class="profile-card">
-                      <div class="profile-pic">
-                          <img src="img/cover 11.png" alt="">
-                      </div>
-                      <div>
-                          <p class="username">modern_web_channel</p>
-                          <p class="sub-text">followed bu user</p>
-                      </div>
-                      <button class="action-btn">follow</button>
-                  </div>
-                  <div class="profile-card">
-                      <div class="profile-pic">
-                          <img src="img/cover 12.png" alt="">
-                      </div>
-                      <div>
-                          <p class="username">modern_web_channel</p>
-                          <p class="sub-text">followed bu user</p>
-                      </div>
-                      <button class="action-btn">follow</button>
-                  </div>
-                  <div class="profile-card">
-                      <div class="profile-pic">
-                          <img src="img/cover 13.png" alt="">
-                      </div>
-                      <div>
-                          <p class="username">modern_web_channel</p>
-                          <p class="sub-text">followed bu user</p>
-                      </div>
-                      <button class="action-btn">follow</button>
-                  </div>
-                </div>
-              </div>
-            </section>          
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>-->
-  <!-- End Page Content-->
-
   <!-- Activity Galleria -->
   <div class="untree_co-section untree_co-section-4 pb-0"  id="portfolio-section">
     <div class="container">
-
 
       <div class="relative"><div class="loader-portfolio-wrap"><div class="loader-portfolio"></div></div> </div>
       <div id="portfolio-single-holder"></div>
@@ -138,28 +22,28 @@
       <div class="portfolio-wrapper">
 
         <div id="posts" class="row">
-            {% for post in posts %}
-                <div class="item web branding col-sm-6 col-md-6 col-lg-4 isotope-mb-2">
-                    <a href="#" class="portfolio-item ajax-load-page isotope-item gsap-reveal-img" data-id="{{ post.id }}">
-                        <div class="overlay">
-                            <span class="wrap-icon icon-link2"></span>
-                            <div class="portfolio-item-content">
-                                <h3>{{ post.title }}</h3>
-                                <p>{{ post.user.username }}</p>
-                            </div>
-                        </div>
-                        <img src="{{ url_for('static', filename='userPosts/' + post.image) }}" class="lazyload img-fluid" alt="Images" />
-                    </a>
+          {% set i = 1 %} {# Counter for post number to be displayed #}
+          {% for post in posts %}
+            <div class="item web branding col-sm-6 col-md-6 col-lg-4 isotope-mb-2">
+              <a href="portfolio-single-{{ i }}.html" class="portfolio-item ajax-load-page isotope-item gsap-reveal-img" data-id="{{ post.id }}">
+                <div class="overlay">
+                  <span class="wrap-icon icon-link2"></span>
+                    <div class="portfolio-item-content">
+                      <h3>{{ post.title }}</h3>
+                      <p>{{ post.user.username }}</p>
+                    </div>
                 </div>
-            {% endfor %}
+                <img src="{{ post.image_url() }}" class="lazyload img-fluid" alt="Images" />
+              </a>
+            </div>
+          {% endfor %}
           <!--------------------------
             Post Card:
              - Post Picture
              - Post Title
              - User Who Posted (UWP)
             -------------------------->
-          <div class="item web branding col-sm-6 col-md-6 col-lg-4 isotope-mb-2">
-            <!-- Link each card to the UWP profile page -->
+          <!--<div class="item web branding col-sm-6 col-md-6 col-lg-4 isotope-mb-2">
             <a href="portfolio-single-1.html" class="portfolio-item ajax-load-page isotope-item gsap-reveal-img" data-id="1">
               <div class="overlay">
                 <span class="wrap-icon icon-link2"></span>
@@ -168,11 +52,10 @@
                   <p>{{ current_user.username }}</p>
                 </div>
               </div>
-              <img src="{{ url_for('static', filename='images/img_1.jpg') }}" class="lazyload  img-fluid" alt="Images" />
+              <img src="{{ url_for('static', filename='images/userPosts/IMG_1225_3.jpg') }}" class="lazyload  img-fluid" alt="Images" />
             </a>
-          </div>
-          
-          <!-- Image 2 -->
+          </div>-->
+          <!---
           <div class="item web branding col-sm-6 col-md-6 col-lg-4 isotope-mb-2">
             <a href="portfolio-single-2.html" class="portfolio-item ajax-load-page isotope-item gsap-reveal-img" data-id="2">
               <div class="overlay">
@@ -186,7 +69,6 @@
             </a>
           </div>
 
-          <!-- Image 3 -->
           <div class="item web branding col-sm-6 col-md-6 col-lg-4 isotope-mb-2">
             <a href="portfolio-single-3.html" class="portfolio-item ajax-load-page isotope-item gsap-reveal-img" data-id="3">
               <div class="overlay">
@@ -198,7 +80,7 @@
               </div>
               <img src="{{ url_for('static', filename='images/img_3.jpg') }}" class="lazyload  img-fluid" alt="Images" />
             </a>
-          </div>
+          </div>-->
         </div>
       </div>
       </div>

@@ -3,6 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy import MetaData, Table, Column, Integer, String, ForeignKey
 from datetime import datetime
 from flask_login import UserMixin
+from flask import url_for
 
 db = SQLAlchemy()
 
@@ -69,6 +70,9 @@ class Post(db.Model):
     image = db.Column(db.String(255), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.TIMESTAMP, default=db.func.current_timestamp())
+
+    def image_url(self):
+        return url_for('static', filename=f'userPosts/{self.image}')
     # Comments relationship
     #comments = db.relationship('Comment', backref=db.backref('post', lazy='joined'), lazy='dynamic')
 

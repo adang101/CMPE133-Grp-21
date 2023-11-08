@@ -170,10 +170,10 @@ def upload_profile_picture():
                 filename = f"user_{current_user.id}_{secure_filename(file.filename)}"
 
                 # Ensure the upload folder exists
-                os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+                os.makedirs(app.config['UPLOAD_FOLDER_PROFILE_PICS'], exist_ok=True)
 
                 # Save the file to a userPhotos folder in your static directory
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                file.save(os.path.join(app.config['UPLOAD_FOLDER_PROFILE_PICS'], filename))
 
                 # Update the user's profile_picture field with the filename
                 current_user.profile_picture = filename
@@ -196,6 +196,7 @@ def logout():
 def home_feed():
     page_name = 'Home Feed'
     #return render_template('home-feed.html', page_name=page_name)
+    # This fetches all posts; you can modify the query as needed
     posts = Post.query.all()
     return render_template('home-feed.html', posts=posts, page_name=page_name)
 
@@ -205,6 +206,7 @@ def home_feed():
 def create_page():
     return render_template('create-page.html')
 
+
 # Handle create post form submission
 @bp.route('/create-post', methods=['POST'])
 @login_required
@@ -212,11 +214,21 @@ def create_post():
     if request.method == 'POST':
         title = request.form['title']
         image = request.files['image']
+                # Save the file to a userPhotos folder in your static directory
+                #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
+                # Update the user's profile_picture field with the filename
+                #current_user.profile_picture = filename
+                #db.session.commit()
         # Check if the file extension is allowed
         if image and '.' in image.filename and image.filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']:
+            # Generate image file name
             filename = secure_filename(image.filename)
-            image_path = os.path.join(app.config['UPLOAD_FOLDER'], 'userPosts', filename)
+
+            # Ensure the upload folder exists
+            os.makedirs(app.config['UPLOAD_FOLDER_POSTS'], exist_ok=True)
+
+            image_path = os.path.join(app.config['UPLOAD_FOLDER_POSTS'], filename)
             image.save(image_path)
 
             new_post = Post(title=title, image=filename, user_id=current_user.id)
@@ -224,9 +236,8 @@ def create_post():
             db.session.commit()
             flash('Post created successfully.')
         else:
-            flash('Invalid file format. Please upload a valid image.')
-        
-        render_template('home-feed.html')
+            flash('File type not allowed. Please upload a PNG, JPG, or JPEG file.')
+    return render_template('home-feed.html')
 
 
 # Route to display a user's posts. Pass to template to display posts
