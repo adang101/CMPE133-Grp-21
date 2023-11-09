@@ -14,7 +14,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="author" content="Untree.co">
-  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.png') }}">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='/images/casso_icon2.jpeg') }}">
 
   <meta name="description" content="" />
   <meta name="keywords" content="" />
@@ -58,48 +58,59 @@
   <!-- Navigation Bar -->
   <nav class="site-nav dark mb-5 site-navbar-target">
     <div class="container">
-      <!-- Navigation Bar -->
       <div class="site-navigation">
         <a href="/" class="logo m-0">CASSO<span class="text-primary">.</span></a>
         <!-- Search Bar -->
         <input type="text" class="search-box" placeholder="search">
         <ul class="js-clone-nav d-none d-lg-inline-none site-menu float-right site-nav-wrap">
-          <li><a href="/" class="nav-link active">Home</a></li>
-          <!-- Profile + Logout / Login + Sign up
-            Check if user is logged in-->
+
+          <!-- Nav links / Buttons -->
+          <li class="has-children">
+            <a href="/" class="nav-link{% if current_page == '/' %}-active{% endif %}">Home</a>
+            <ul class="dropdown">
+              <!--<li class="has-children"> 
+                <a href="/#about-section" class="nav-link">About Us</a>
+                <ul class="dropdown">
+                  <li><a href="/#about-section" class="nav-link">CASSO</a></li>
+                  <li class="has-children">
+                    <a href="/#alvin-card">Team Cards</a>
+                    <ul class="dropdown">
+                      <li><a href="/#alvin-card" class="nav-link">Alvin Dang</a></li>
+                      <li><a href="/#binh-card" class="nav-link">Binh Vu</a></li>
+                      <li><a href="/#jun-card" class="nav-link">Jun Jie Lai</a></li>
+                      <li><a href="/#lam-card" class="nav-link">Lam Nguyen</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>-->
+              <li><a href="/#about-section" class="nav-link">About Us</a></li>
+              <li><a href="/#features-section" class="nav-link">Features</a></li>
+              <li><a href="/#contact-section" class="nav-link">Contact us</a></li>
+            </ul>
+          </li>
           {% if current_user.is_authenticated %}
-            <li><a href="profile" class="nav-link">Profile</a></li>
+            <li class="{% if current_page == '/home-feed' %}-active{% endif %}">
+              <a href="home-feed" class="nav-link">Home Feed</a>
+            </li>
+            <li class="has-children">
+              <a href="view-profile" class="nav-link">Your Profile</a>
+              <ul class="dropdown">
+                <li><a href="profile-settings" class="nav-link">Profile Settings</a></li>
+              </ul>
+            </li>
             <li><a href="create-page" class="nav-link">Create a post</a></li>
+            <li><a href="chat" class="nav-link">Messages</a></li>
             <li><a href="sign-out" class="nav-link">Logout</a></li>
           {% else %}
             <li><a href="login" class="nav-link">Login</a></li>
             <li><a href="sign-up" class="nav-link">Sign up</a></li>
           {% endif %}
-          <li class="has-children">
-            <a href="/#about-section" class="nav-link">About Us</a>
-            <ul class="dropdown">
-              <li><a href="/#about-section" class="nav-link">CASSO</a></li>
-              <li class="has-children">
-                <a href="/#alvin-card">Team Cards</a>
-                <ul class="dropdown">
-                  <li><a href="/#alvin-card" class="nav-link">Alvin Dang</a></li>
-                  <li><a href="/#binh-card" class="nav-link">Binh Vu</a></li>
-                  <li><a href="/#jun-card" class="nav-link">Jun Jie Lai</a></li>
-                  <li><a href="/#lam-card" class="nav-link">Lam Nguyen</a></li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-          <li><a href="/#features-section" class="nav-link">Features</a></li>
-          <li><a href="/#contact-section" class="nav-link">Contact us</a></li>
         </ul>
 
         <a href="#" class="burger ml-auto float-right site-menu-toggle js-menu-toggle d-inline-block d-lg-inline-block" data-toggle="collapse" data-target="#main-navbar">
           <span></span>
         </a>
-
       </div>
-      <!-- END Navigation Bar -->
     </div>
   </nav>
   <!-- END Navigation Bar -->
@@ -207,6 +218,23 @@
         <span class="sr-only">Loading...</span>
         </div>
     </div>
+
+    <!-- Active nav-link script -->
+    <script>
+      const navLinks = document.querySelectorAll('.nav-link');
+      const currentPage = '{{ current_page }}';
+    
+      navLinks.forEach(link => {
+        const linkHref = link.getAttribute('href');
+        const activeClass = 'nav-link-active';
+    
+        if (linkHref.endsWith(currentPage)) {
+          link.classList.add(activeClass);
+        } else {
+          link.classList.remove(activeClass);
+        }
+      });
+    </script>
     
     <script src="{{ url_for('static', filename='css/js/jquery-3.4.1.min.js') }}"></script>
     <script src="{{ url_for('static', filename='css/js/popper.min.js') }}"></script>

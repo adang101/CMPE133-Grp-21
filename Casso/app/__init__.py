@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, g, request
 from .models import db  # Import your database models
 
 def create_app():
@@ -20,6 +20,22 @@ def create_app():
     # Register URL routes (in routes.py)
     from .routes import bp as routes_bp
     app.register_blueprint(routes_bp)
+
+    @app.before_request
+    def before_request():
+        g.current_page = request.endpoint  # Set current_page to the endpoint of the current request
+        if request.endpoint == '/':
+            g.current_page = 'home'  # Set current_page to 'home' for the homepage
+        elif request.endpoint == '/home-feed':
+            g.current_page = 'home-feed'  # Set current_page to 'home-feed' for the home-feed page
+        elif request.endpoint == '/profile':
+            g.current_page = 'profile'  # Set current_page to 'profile' for the profile page
+        elif request.endpoint == '/create-page': 
+            g.current_page = 'create-page'
+        elif request.endpoint == '/login':
+            g.current_page = 'login'
+        elif request.endpoint == '/sign-up':
+            g.current_page = 'sign-up'
 
     return app
 

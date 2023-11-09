@@ -52,7 +52,7 @@ class User(UserMixin, db.Model):
         return False
 
     # Relationship with posts
-    post = db.relationship('Post', backref='user', lazy=True)
+    posts = db.relationship('Post', backref='user', lazy=True)
     # Relationships to followers and following
     #followers = db.relationship('Follower', foreign_keys='Follower.followed_id', 
     #                            backref='followed', lazy='dynamic')
@@ -72,7 +72,9 @@ class Post(db.Model):
     created_at = db.Column(db.TIMESTAMP, default=db.func.current_timestamp())
 
     def image_url(self):
-        return url_for('static', filename=f'userPosts/{self.image}')
+        return url_for('static', filename=f'images/userPosts/{self.image}')
+    
+
     # Comments relationship
     #comments = db.relationship('Comment', backref=db.backref('post', lazy='joined'), lazy='dynamic')
 

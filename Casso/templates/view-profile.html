@@ -1,0 +1,164 @@
+<!--
+ CMPE 133 - Project: Casso
+  Group 21
+    Alvin Dang
+    Binh Vu
+    Jun Jie Lai
+    Lam Vong
+-->
+
+<!---
+<main>
+	<div class="container">
+		<div class="gallery">
+			<div class="gallery-item" tabindex="0">
+				<img src="https://images.unsplash.com/photo-1511765224389-37f0e77cf0eb?w=500&h=500&fit=crop" class="gallery-image" alt="">
+				<div class="gallery-item-info">
+					<ul>
+						<li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 56</li>
+						<li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 2</li>
+					</ul>
+				</div>
+			</div>
+			<div class="gallery-item" tabindex="0">
+				<img src="https://images.unsplash.com/photo-1497445462247-4330a224fdb1?w=500&h=500&fit=crop" class="gallery-image" alt="">
+				<div class="gallery-item-info">
+					<ul>
+						<li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 89</li>
+						<li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 5</li>
+					</ul>
+				</div>
+			</div>
+			<div class="gallery-item" tabindex="0">
+				<img src="https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=500&h=500&fit=crop" class="gallery-image" alt="">
+				<div class="gallery-item-type">
+					<span class="visually-hidden">Gallery</span><i class="fas fa-clone" aria-hidden="true"></i>
+				</div>
+				<div class="gallery-item-info">
+					<ul>
+						<li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 42</li>
+						<li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 1</li>
+					</ul>
+				</div>
+			</div>
+			<div class="gallery-item" tabindex="0">
+				<img src="https://images.unsplash.com/photo-1502630859934-b3b41d18206c?w=500&h=500&fit=crop" class="gallery-image" alt="">
+				<div class="gallery-item-type">
+					<span class="visually-hidden">Video</span><i class="fas fa-video" aria-hidden="true"></i>
+				</div>
+				<div class="gallery-item-info">
+					<ul>
+						<li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 38</li>
+						<li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 0</li>
+					</ul>
+				</div>
+			</div>
+			<div class="gallery-item" tabindex="0">
+				<img src="https://images.unsplash.com/photo-1498471731312-b6d2b8280c61?w=500&h=500&fit=crop" class="gallery-image" alt="">
+				<div class="gallery-item-type">
+					<span class="visually-hidden">Gallery</span><i class="fas fa-clone" aria-hidden="true"></i>
+				</div>
+				<div class="gallery-item-info">
+					<ul>
+						<li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 47</li>
+						<li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 1</li>
+					</ul>
+				</div>
+			</div>
+			<div class="gallery-item" tabindex="0">
+				<img src="https://images.unsplash.com/photo-1515023115689-589c33041d3c?w=500&h=500&fit=crop" class="gallery-image" alt="">
+				<div class="gallery-item-info">
+					<ul>
+						<li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 94</li>
+						<li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 3</li>
+					</ul>
+				</div>
+			</div>
+			<div class="gallery-item" tabindex="0">
+				<img src="https://images.unsplash.com/photo-1504214208698-ea1916a2195a?w=500&h=500&fit=crop" class="gallery-image" alt="">
+				<div class="gallery-item-type">
+					<span class="visually-hidden">Gallery</span><i class="fas fa-clone" aria-hidden="true"></i>
+				</div>
+				<div class="gallery-item-info">
+					<ul>
+						<li class="gallery-item-likes"><span class="visually-hidden">Likes:</span><i class="fas fa-heart" aria-hidden="true"></i> 52</li>
+						<li class="gallery-item-comments"><span class="visually-hidden">Comments:</span><i class="fas fa-comment" aria-hidden="true"></i> 4</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="loader"></div>
+	</div>
+</main>-->
+
+{% extends "base.html" %}
+
+{% block title %}{{ username }}{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/view-profile.css') }}">
+    <!-- Header -->
+    <div class="untree_co-section pb-0" id="home-section">
+        <div class="container">
+            <!-- Profile -->
+            <div class="profile">
+                <div class="profile-image">
+                    <img class="prof-pic" src="{{ url_for('static', filename='images/userPhotos/' + profile_pic) }}" alt="">
+                </div>
+                <!-- Profile User Settings -->
+                    <div class="profile-user-settings">
+                        <h1 class="heading gsap-reveal-hero mb-3"> {{ username }}<span class="text-primary">.</span></h1>
+                        {% if current_user.id == user.id %}
+                            <a href="profile-settings">
+                                <button class="btn profile-edit-btn float-right">Edit Profile</button>
+                            </a>
+                        {% endif %}
+                    </div> <!-- End of profile user settings -->
+                <!-- Profile Stats -->
+                <div class="profile-stats">
+                    <ul>
+                        <li><span class="profile-stat-count">164</span> posts</li>
+                        <li><span class="profile-stat-count">188</span> commissions</li>
+                        <li><span class="profile-stat-count">206</span> following</li>
+                    </ul>
+                </div> <!-- End of profile stats -->
+                <!-- Profile Bio -->
+                <div class="profile-bio">
+                    <p><span class="profile-real-name">{{ name }}</span><br>{{ bio }}</p>
+                </div> <!-- End of profile bio -->
+            </div> <!-- End of profile section -->
+        </div> <!-- End of container -->
+    </div>
+    <!-- END Header -->
+
+    <!-- Activity Galleria -->
+  <div class="untree_co-section untree_co-section-4 pb-0"  id="portfolio-section">
+    <div class="container">
+
+      <div class="relative"><div class="loader-portfolio-wrap"><div class="loader-portfolio"></div></div> </div>
+      <div id="portfolio-single-holder"></div>
+
+      <div class="portfolio-wrapper">
+
+        <div id="posts" class="row">
+          {% for post in user_posts %}
+            <div class="item web branding col-sm-6 col-md-6 col-lg-4 isotope-mb-2">
+              <!--class="portfolio-item **ajax-load-page** isotope-item gsap-reveal-img | Ajax loads the portfolio overlay / scroller -->
+              <a href="{{ url_for('main.user', user_id=post.user.id) }}" class="portfolio-item isotope-item gsap-reveal-img" data-id="{{ post.id }}">
+                <div class="overlay">
+                  <span class="wrap-icon icon-link2"></span>
+                    <div class="portfolio-item-content">
+                      <h3>{{ post.title }}</h3>
+                      <p>{{ post.user.username }}</p>
+                    </div>
+                </div>
+                <img src="{{ post.image_url() }}" class="lazyload img-fluid" alt="Images" />
+                </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      </div>
+    </div>
+    <!-- END Activity Galleria -->
+{% endblock %}

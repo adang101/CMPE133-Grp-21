@@ -119,10 +119,10 @@ def sign_up_form():
             return render_template('sign-up.html', messages=get_flashed_messages())
 
 # Path to Profile view (profile.html) - Requires user to be logged in
-@bp.route('/profile')
+@bp.route('/profile-settings')
 @login_required
 def profile():
-    return render_template('profile.html')
+    return render_template('profile-settings.html')
 
 # Handle biography form submission
 @bp.route('/update-biography', methods=['POST'])
@@ -132,7 +132,7 @@ def update_biography():
     current_user.biography = new_biography
     db.session.commit()
     flash('Your biography has been updated.')
-    return render_template('profile.html')
+    return render_template('profile-settings.html')
 
 # Handle password form submission
 @bp.route('/update-password', methods=['POST'])
@@ -143,18 +143,18 @@ def update_password():
     # Check if password and check password fields match
     if check_password_hash(current_user.password, check_password):
         flash('Your current password was entered incorrectly. Please try again.')
-        return render_template('profile.html', messages=get_flashed_messages())
+        return render_template('profile-settings.html', messages=get_flashed_messages())
     else:
         # Check if confirm password is same as new password
         confirm_password = request.form['confirm_password']
         if confirm_password != new_password:
             flash('Passwords do not match. Please try again.')
-            return render_template('profile.html', messages=get_flashed_messages())
+            return render_template('profile-settings.html', messages=get_flashed_messages())
         else:
             current_user.password = new_password
             db.session.commit()
             flash('Your password has been updated.')
-            return render_template('profile.html', messages=get_flashed_messages())
+            return render_template('profile-settings.html', messages=get_flashed_messages())
     
 # Handle profile picture form submission
 @bp.route('/upload-profile-picture', methods=['POST'])
@@ -181,7 +181,7 @@ def upload_profile_picture():
             else:
                 flash('File type not allowed. Please upload a PNG, JPG, or JPEG file.')
 
-    return render_template('profile.html')
+    return render_template('profile-settings.html')
 
 # Handle user sign out request - Requires user to be logged in
 @bp.route("/sign-out")
@@ -205,7 +205,6 @@ def home_feed():
 @login_required
 def create_page():
     return render_template('create-page.html')
-
 
 # Handle create post form submission
 @bp.route('/create-post', methods=['POST'])
@@ -235,10 +234,43 @@ def create_post():
             db.session.add(new_post)
             db.session.commit()
             flash('Post created successfully.')
+            return render_template('create-page.html', messages=get_flashed_messages())
         else:
             flash('File type not allowed. Please upload a PNG, JPG, or JPEG file.')
     return render_template('home-feed.html')
 
+ # Handle navigation to a user's profile page
+
+@bp.route('/view-profile')
+@login_required
+def current_user_profile():
+    # You can directly access the current user using current_user
+    user = current_user
+    user_posts = user.posts  # Get the user's posts
+    name = user.full_name
+    username = user.username
+    bio = user.biography
+    profile_pic = user.profile_picture
+
+    return render_template('view-profile.html', user=user, user_posts=user_posts, name=name, username=username, bio=bio, profile_pic=profile_pic)
+
+# Load X user profile views
+@bp.route('/user/<int:user_id>')
+def user(user_id):
+    user = User.query.get(user_id)
+    user_posts = user.posts  # Get the user's posts
+    name = user.full_name
+    username = user.username
+    bio = user.biography
+    profile_pic = user.profile_picture
+
+    return render_template('view-profile.html', user=user, user_posts=user_posts, name=name, username=username, bio=bio, profile_pic=profile_pic)
+
+# Load current user chat page
+@bp.route('/chat')
+@login_required
+def chat():
+    return render_template('chat.html')
 
 # Route to display a user's posts. Pass to template to display posts
 #@app.route('/user/<int:user_id>')
