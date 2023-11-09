@@ -1,0 +1,83 @@
+@import url(https://fonts.googleapis.com/css?family=Montserrat);
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Montserrat", sans-serif;
+  /*   outline: 1px solid white; */
+}
+
+body {
+  background: #000000;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  padding-top: 1rem;
+}
+.base-container {
+  width: 100%;
+}
+.friend-text-div {
+  display: flex;
+  margin-left: 0.5rem;
+}
+
+.friend-text-div > img {
+  height: 2rem;
+  align-self: flex-end;
+}
+
+.friend-text-container {
+  width: 10rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.friend-text {
+  background: #262626;
+  border-radius: 0.5rem;
+  color: #fff;
+  height: fit-content;
+  width: fit-content;
+  padding: 0.5rem 1rem;
+  margin: 0.12rem 0.5rem;
+}
+
+.my-text-div {
+  display: flex;
+  justify-content: flex-end;
+}
+.my-text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.my-text {
+  background: linear-gradient(
+      180deg,
+      rgba(139, 47, 184, 1) 0%,
+      rgba(103, 88, 205, 1) 51%,
+      rgba(89, 116, 219, 1) 92%
+    )
+    no-repeat center;
+  background-attachment: fixed;
+  color: #fff;
+  border-radius: 0.5rem 0.2rem 0.2rem 0.5rem;
+  height: fit-content;
+  width: fit-content;
+  padding: 0.5rem 1rem;
+  margin: 0.12rem 0.5rem;
+}
+
+.my-text-container > div:first-child {
+  border-radius: 0.5rem 1rem 0.2rem 0.5rem;
+}
+.my-text-container > div:last-child {
+  border-radius: 0.5rem 0.2rem 1rem 0.5rem;
+}
+.friend-text-container > div:first-child {
+  border-radius: 1rem 0.5rem 0.2rem 0.5rem;
+}
+.friend-text-container > div:last-child {
+  border-radius: 0.5rem 0.2rem 0.5rem 1rem;
+}
