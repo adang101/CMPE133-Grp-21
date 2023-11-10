@@ -66,7 +66,7 @@
 
           <!-- Nav links / Buttons -->
           <li class="has-children">
-            <a href="/" class="nav-link{% if current_page == '/' %}-active{% endif %}">Home</a>
+            <a href="/" class="nav-link">Home</a>
             <ul class="dropdown">
               <!--<li class="has-children"> 
                 <a href="/#about-section" class="nav-link">About Us</a>
@@ -89,21 +89,19 @@
             </ul>
           </li>
           {% if current_user.is_authenticated %}
-            <li class="{% if current_page == '/home-feed' %}-active{% endif %}">
-              <a href="home-feed" class="nav-link">Home Feed</a>
-            </li>
+            <li><a href="{{ url_for('main.home_feed') }}" class="nav-link">Home Feed</a></li>
             <li class="has-children">
-              <a href="view-profile" class="nav-link">Your Profile</a>
+              <a href="{{ url_for('main.current_user_profile') }}" class="nav-link">Your Profile</a>
               <ul class="dropdown">
-                <li><a href="profile-settings" class="nav-link">Profile Settings</a></li>
+                <li><a href="{{ url_for('main.profile') }}" class="nav-link">Profile Settings</a></li>
               </ul>
             </li>
-            <li><a href="create-page" class="nav-link">Create a post</a></li>
-            <li><a href="chat" class="nav-link">Messages</a></li>
-            <li><a href="sign-out" class="nav-link">Logout</a></li>
+            <li><a href="{{ url_for('main.create_page') }}" class="nav-link">Create a post</a></li>
+            <li><a href="{{ url_for('main.chat') }}" class="nav-link">Messages</a></li>
+            <li><a href="{{ url_for('main.logout') }}" class="nav-link">Logout</a></li>
           {% else %}
-            <li><a href="login" class="nav-link">Login</a></li>
-            <li><a href="sign-up" class="nav-link">Sign up</a></li>
+            <li><a href="{{ url_for('main.login') }}" class="nav-link">Login</a></li>
+            <li><a href="{{ url_for('main.sign_up') }}" class="nav-link">Sign up</a></li>
           {% endif %}
         </ul>
 
