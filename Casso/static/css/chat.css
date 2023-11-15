@@ -1,0 +1,120 @@
+body{margin-top:20px;}
+
+/* Small devices (landscape phones, 576px and up) */
+@media (max-width: 576px) {
+    .msg-container {
+        max-height: 300px;
+    }
+    .chat-messages {
+        max-height: 70px;
+    }
+    .chat-users {
+        max-height: 40px;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+    .msg-container {
+        max-height: 430px;
+    }
+    .chat-messages {
+        max-height: 100px;
+    }
+    .chat-users {
+        max-height: 60px;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 977px) {
+    .msg-container {
+        max-height: 830px;
+    }
+    .chat-messages {
+        max-height: 200px;
+    }
+    .chat-users {
+        max-height: 500px;
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1130px) {
+    .msg-container {
+        max-height: 780px;
+    }
+}
+
+.chat-online {
+    color: #34ce57
+}
+
+.chat-offline {
+    color: #e4606d
+}
+
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    max-height: 680px;
+    overflow-y: auto
+}
+
+.chat-users {
+    display: flex;
+    flex-direction: column;
+    max-height: 780px;
+    overflow-y: auto
+}
+
+.chat-message-left,
+.chat-message-right {
+    display: flex;
+    flex-shrink: 0
+}
+
+.chat-message-left {
+    margin-right: auto
+}
+
+.chat-message-right {
+    flex-direction: row-reverse;
+    margin-left: auto
+}
+.py-3 {
+    padding-top: 1rem!important;
+    padding-bottom: 1rem!important;
+}
+.px-4 {
+    padding-right: 1.5rem!important;
+    padding-left: 1.5rem!important;
+}
+.flex-grow-0 {
+    flex-grow: 0!important;
+}
+.border-top {
+    border-top: 1px solid #dee2e6!important;
+}
+
+.form-control, .custom-select {
+    border: 1px solid #43434d !important;
+    border-radius: 10px;
+    padding-left: 8px;
+}
+
+.btn {
+    padding-bottom: 8px;
+    border-radius: 10px;
+}
+
+.input-group {
+    border-radius: 5px; 
+    width: 715px; 
+    padding-right: 15px;
+}
+
+.input-group .form-control {
+    border-radius: 5px !important;
+    margin-right: 10px;
+}
