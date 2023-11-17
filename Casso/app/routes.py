@@ -1,7 +1,8 @@
 from flask import render_template, Blueprint, request, redirect, url_for, flash, get_flashed_messages, current_app as app
 from flask_login import login_required, login_user, logout_user, current_user
-from .models import User, db, Post
+from .models import User, db, Post, Message, ChatSession, CommissionRequest
 from werkzeug.security import check_password_hash, generate_password_hash
+from sqlalchemy import func
 import re, os
 from werkzeug.utils import secure_filename
 
@@ -244,7 +245,6 @@ def create_post():
 @bp.route('/view-profile')
 @login_required
 def current_user_profile():
-    # You can directly access the current user using current_user
     user = current_user
     user_posts = user.posts  # Get the user's posts
     name = user.full_name
@@ -269,8 +269,48 @@ def user(user_id):
 # Load current user chat page
 @bp.route('/chat')
 @login_required
-def chat():
-    return render_template('chat.html')
+def default_chat():
+    # return render_template('chat.html')
+    # Retrieve chat sessions for the current user
+    user_chat_sessions = ChatSession.query.filter(
+        (ChatSession.user1_id == current_user.id) | (ChatSession.user2_id == current_user.id)
+        ).outerjoin(Message).group_by(ChatSession).order_by(func.coalesce(func.max(Message.created_at), ChatSession.created_at).desc()).all()
+    most_recent_chat_session = user_chat_sessions[0] if user_chat_sessions else None
+    messages = most_recent_chat_session.messages.order_by(Message.created_at.asc()).all() if most_recent_chat_session else []
+    return render_template('chat.html', user_chat_sessions=user_chat_sessions, current_chat_session=most_recent_chat_session, messages=messages)
+
+# Load chat session for chat.html
+@bp.route('/chat/<int:chat_session_id>', methods=['GET', 'POST'])
+@login_required
+def chat_session(chat_session_id):
+    curr_chat_session = ChatSession.query.get_or_404(chat_session_id)
+    user_chat_sessions = (ChatSession.query.filter(
+            (ChatSession.user1_id == current_user.id) | (ChatSession.user2_id == current_user.id))
+            .order_by(db.func.coalesce(Message.created_at, ChatSession.created_at).desc()).all())
+    # Pagination. Work on it later messages = chat_session.messages.order_by(Message.created_at.asc()).limit(14).all()
+    messages = curr_chat_session.messages.order_by(Message.created_at.asc()).all()
+
+    if request.method == 'POST':
+        # Handle sending a new message (add logic to store the message)
+        new_message_content = request.form.get('message_input')
+        if new_message_content:
+            new_message = Message(sender_id=current_user.id, receiver_id=curr_chat_session.user2_id, content=new_message_content, chat_session_id=curr_chat_session.id)
+            db.session.add(new_message)
+            db.session.commit()
+        return redirect(url_for('chat_session', chat_session_id=curr_chat_session.id))
+
+    return render_template('chat.html', user_chat_sessions=user_chat_sessions, current_chat_session=curr_chat_session, messages=messages)
+
+
+# Load more messages for chat.html current chat session
+'''@bp.route('/load_more_messages/<int:chat_session_id>/<int:last_message_id>')
+@login_required
+def load_more_messages(chat_session_id, last_message_id):
+    chat_session = ChatSession.query.get_or_404(chat_session_id)
+    more_messages = load_more_messages(chat_session, last_message_id)
+
+    # Render and return the HTML for the new messages
+    return render_template('_message_list.html', messages=more_messages)'''
 
 # Route to display a user's posts. Pass to template to display posts
 #@app.route('/user/<int:user_id>')

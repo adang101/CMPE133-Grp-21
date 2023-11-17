@@ -1,8 +1,10 @@
 from flask import Flask, g, request
 from .models import db  # Import your database models
+from flask_migrate import Migrate
 
 def create_app():
     app = Flask("Casso")
+    migrate = Migrate(app, db)
 
     # Database configuration (if you are using a database)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/alvindang/Documents/GitHub/CMPE133-Grp-21/Casso/Casso_database.db'

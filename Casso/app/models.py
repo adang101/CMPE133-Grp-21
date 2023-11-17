@@ -2,7 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy import MetaData, Table, Column, Integer, String, ForeignKey
 from datetime import datetime
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 from flask import url_for
 from flask_migrate import Migrate
 
@@ -57,6 +57,11 @@ class User(UserMixin, db.Model):
     messages_received = db.relationship('Message', foreign_keys='Message.receiver_id', 
         backref='receiver', lazy='dynamic') # One to many
     
+    chat_sessions_as_user1 = db.relationship('ChatSession', 
+        foreign_keys='ChatSession.user1_id', backref='user1', lazy='dynamic')
+    chat_sessions_as_user2 = db.relationship('ChatSession', 
+        foreign_keys='ChatSession.user2_id', backref='user2', lazy='dynamic')
+
     likes = db.relationship('Like', backref='user', lazy='dynamic') # One to many
 
     followers = db.relationship('Follower', foreign_keys='Follower.followed_id', 
@@ -102,14 +107,42 @@ class Message(db.Model):
     receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     content = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.TIMESTAMP, default=db.func.current_timestamp())
-    read = db.Column(db.Boolean, default=False)  # Added for read/unread status
-    message_type = db.Column(db.String(50))  # Added for categorizing messages
+    chat_session_id = db.Column(db.Integer, db.ForeignKey('chat_session.id'))
+
+    # Assuming chat_session is an instance of the ChatSession model
+    # messages_for_chat_session = chat_session.messages.all()
 
     def __init__(self, sender_id, receiver_id, content, message_type=None):
         self.sender_id = sender_id
         self.receiver_id = receiver_id
         self.content = content
         self.message_type = message_type
+
+# Chat Session model to store user chat sessions
+class ChatSession(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user1_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user2_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_at = db.Column(db.TIMESTAMP, default=db.func.current_timestamp())
+
+    messages = db.relationship('Message', backref='chat_session', lazy='dynamic')
+
+    def __init__(self, user1_id, user2_id):
+        # Ensure that the current user is always user1
+        self.user1_id, self.user2_id = (user1_id, user2_id) if user1_id == current_user.id else (user2_id, user1_id)
+
+    # Method to retrieve all messages for a chat session
+    def get_messages(self):
+        return Message.query.filter_by(chat_session_id=self.id).order_by(Message.created_at.asc())
+        # Create a new chat session
+        #chat_session = ChatSession(sender_id=1, receiver_id=2)
+        #db.session.add(chat_session)
+        #db.session.commit()
+
+        # Add a message to the chat session
+        #message = Message(sender_id=1, receiver_id=2, content="Hello!")
+        #chat_session.messages.append(message)
+        #db.session.commit()
 
 # Follower model to store user followers and following
 # Many-to-many relationship with User model (Each user can follow multiple users and be followed by multiple users)
