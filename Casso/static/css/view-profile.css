@@ -52,7 +52,42 @@ img {
     border-color: black; /* Border color changes to blue on hover */
   }
 
+  .btn.profile-message-btn {
+    color: black; /* Default color is black */
+    background: transparent; /* Default background is transparent */
+    border-color: black; /* Default border color is black */
+  }
   
+  .btn.profile-message-btn:hover {
+    color: blue; /* Text color changes to white on hover */
+    background: white; /* Background color changes to blue on hover */
+    border-color: black; /* Border color changes to blue on hover */
+  }
+
+  .btn.profile-commission-btn {
+    color: black; /* Default color is black */
+    background: transparent; /* Default background is transparent */
+    border-color: black; /* Default border color is black */
+  }
+  
+  .btn.profile-commission-btn:hover {
+    color: blue; /* Text color changes to white on hover */
+    background: white; /* Background color changes to blue on hover */
+    border-color: black; /* Border color changes to blue on hover */
+  }
+
+  .btn.profile-follow-btn {
+    color: black; /* Default color is black */
+    background: transparent; /* Default background is transparent */
+    border-color: black; /* Default border color is black */
+  }
+  
+  .btn.profile-follow-btn:hover {
+    color: blue; /* Text color changes to white on hover */
+    background: white; /* Background color changes to blue on hover */
+    border-color: black; /* Border color changes to blue on hover */
+  }
+
 .visually-hidden {
     position: absolute !important;
     height: 1px;
@@ -92,6 +127,29 @@ img {
     object-fit: cover; /* This will ensure that the aspect ratio of the image is maintained */
   }
 
+.profile-edit-btn {
+    margin-right: 10px; /* Adjust the margin as needed */
+}
+
+.profile-message-btn {
+    margin-right: 10px; /* Adjust the margin as needed */
+}
+
+.profile-commission-btn {
+    margin-right: 10px; /* Adjust the margin as needed */
+}
+
+.profile-follow-btn {
+    margin-right: 10px; /* Adjust the margin as needed */
+}
+
+.button-container {
+    display: flex;
+    height: auto;
+    width: fit-content;
+    margin-bottom: 10px;
+}
+
 .profile-user-settings,
 .profile-stats,
 .profile-bio {
@@ -123,11 +181,53 @@ h1.heading.gsap-reveal-hero.mb-3 {
     margin-left: 2rem;
 }
 
+.profile-message-btn {
+    font-size: 1.4rem;
+    line-height: 1.8;
+    border: 0.1rem solid #dbdbdb;
+    border-radius: 0.3rem;
+    padding: 0 2.4rem;
+}
+
+.profile-commission-btn {
+    font-size: 1.4rem;
+    line-height: 1.8;
+    border: 0.1rem solid #dbdbdb;
+    border-radius: 0.3rem;
+    padding: 0 2.4rem;
+}
+
+.profile-follow-btn {
+    font-size: 1.4rem;
+    line-height: 1.8;
+    border: 0.1rem solid #dbdbdb;
+    border-radius: 0.3rem;
+    padding: 0 2.4rem;
+}
+
 .profile-user-settings{
     position: relative; /* This is important for the child absolute positioning to work correctly */
   }
   
   .btn.profile-edit-btn.float-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .btn.profile-message-btn.float-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .btn.profile-commission-btn.float-right {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .btn.profile-follow-btn.float-right {
     position: absolute;
     top: 0;
     right: 0;
@@ -165,6 +265,24 @@ h1.heading.gsap-reveal-hero.mb-3 {
 .profile-real-name,
 .profile-stat-count,
 .profile-edit-btn {
+    font-weight: 600;
+}
+
+.profile-real-name,
+.profile-stat-count,
+.profile-message-btn {
+    font-weight: 600;
+}
+
+.profile-real-name,
+.profile-stat-count,
+.profile-commission-btn {
+    font-weight: 600;
+}
+
+.profile-real-name,
+.profile-stat-count,
+.profile-follow-btn {
     font-weight: 600;
 }
 
@@ -289,12 +407,63 @@ h1.heading.gsap-reveal-hero.mb-3 {
         margin-left: 0;
     }
 
+    .profile-message-btn {
+        order: 1;
+        padding: 0;
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    .profile-message-btn {
+        margin-left: 0;
+    }
+
+    .profile-commission-btn {
+        order: 1;
+        padding: 0;
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    .profile-commission-btn {
+        margin-left: 0;
+    }
+
+    .profile-follow-btn {
+        order: 1;
+        padding: 0;
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    .profile-follow-btn {
+        margin-left: 0;
+    }
+
     .profile-bio {
         font-size: 1.4rem;
         margin-top: 1.5rem;
     }
 
     .profile-edit-btn,
+    .profile-bio,
+    .profile-stats {
+        flex-basis: 100%;
+    }
+
+    .profile-message-btn,
+    .profile-bio,
+    .profile-stats {
+        flex-basis: 100%;
+    }
+
+    .profile-commission-btn,
+    .profile-bio,
+    .profile-stats {
+        flex-basis: 100%;
+    }
+
+    .profile-follow-btn,
     .profile-bio,
     .profile-stats {
         flex-basis: 100%;
@@ -390,6 +559,48 @@ Remove or comment-out the code block below to see how the browser will fall-back
 
         .profile-user-settings,
         .profile-edit-btn,
+        .profile-settings-btn,
+        .profile-bio,
+        .profile-stats {
+            margin: 0;
+        }
+
+        .profile-message-btn,
+        .profile-stats,
+        .profile-bio {
+            grid-column: 1 / -1;
+        }
+
+        .profile-user-settings,
+        .profile-message-btn,
+        .profile-settings-btn,
+        .profile-bio,
+        .profile-stats {
+            margin: 0;
+        }
+
+        .profile-commission-btn,
+        .profile-stats,
+        .profile-bio {
+            grid-column: 1 / -1;
+        }
+
+        .profile-user-settings,
+        .profile-commission-btn,
+        .profile-settings-btn,
+        .profile-bio,
+        .profile-stats {
+            margin: 0;
+        }
+
+        .profile-follow-btn,
+        .profile-stats,
+        .profile-bio {
+            grid-column: 1 / -1;
+        }
+
+        .profile-user-settings,
+        .profile-follow-btn,
         .profile-settings-btn,
         .profile-bio,
         .profile-stats {

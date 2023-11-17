@@ -272,10 +272,26 @@ def user(user_id):
 def default_chat():
     # return render_template('chat.html')
     # Retrieve chat sessions for the current user
+    '''user_chat_sessions = ChatSession.query.filter(
+    (ChatSession.user1_id == current_user.id) | (ChatSession.user2_id == current_user.id)
+).outerjoin(Message).group_by(ChatSession).order_by(
+    func.coalesce(func.max(Message.created_at), ChatSession.created_at).asc()
+).all()'''
+    # Retrieve chat sessions for the current user
     user_chat_sessions = ChatSession.query.filter(
         (ChatSession.user1_id == current_user.id) | (ChatSession.user2_id == current_user.id)
-        ).outerjoin(Message).group_by(ChatSession).order_by(func.coalesce(func.max(Message.created_at), ChatSession.created_at).desc()).all()
-    most_recent_chat_session = user_chat_sessions[0] if user_chat_sessions else None
+    ).all()
+
+    most_recent_chat_session = None
+    most_recent_message_time = None
+
+    # For each chat session, get the most recent message
+    for chat_session in user_chat_sessions:
+        most_recent_message = Message.query.filter_by(chat_session_id=chat_session.id).order_by(Message.created_at.asc()).first()
+        if most_recent_message and (most_recent_message_time is None or most_recent_message.created_at > most_recent_message_time):
+            most_recent_chat_session = chat_session
+            most_recent_message_time = most_recent_message.created_at
+
     messages = most_recent_chat_session.messages.order_by(Message.created_at.asc()).all() if most_recent_chat_session else []
     return render_template('chat.html', user_chat_sessions=user_chat_sessions, current_chat_session=most_recent_chat_session, messages=messages)
 
@@ -284,9 +300,20 @@ def default_chat():
 @login_required
 def chat_session(chat_session_id):
     curr_chat_session = ChatSession.query.get_or_404(chat_session_id)
-    user_chat_sessions = (ChatSession.query.filter(
-            (ChatSession.user1_id == current_user.id) | (ChatSession.user2_id == current_user.id))
-            .order_by(db.func.coalesce(Message.created_at, ChatSession.created_at).desc()).all())
+
+    # Retrieve chat sessions for the current user
+    user_chat_sessions = ChatSession.query.filter(
+        (ChatSession.user1_id == current_user.id) | (ChatSession.user2_id == current_user.id)
+    ).all()
+    most_recent_chat_session = None
+    most_recent_message_time = None
+    # For each chat session, get the most recent message
+    for chat_session in user_chat_sessions:
+        most_recent_message = Message.query.filter_by(chat_session_id=chat_session.id).order_by(Message.created_at.asc()).first()
+        if most_recent_message and (most_recent_message_time is None or most_recent_message.created_at > most_recent_message_time):
+            most_recent_chat_session = chat_session
+            most_recent_message_time = most_recent_message.created_at
+
     # Pagination. Work on it later messages = chat_session.messages.order_by(Message.created_at.asc()).limit(14).all()
     messages = curr_chat_session.messages.order_by(Message.created_at.asc()).all()
 
@@ -297,20 +324,42 @@ def chat_session(chat_session_id):
             new_message = Message(sender_id=current_user.id, receiver_id=curr_chat_session.user2_id, content=new_message_content, chat_session_id=curr_chat_session.id)
             db.session.add(new_message)
             db.session.commit()
+
+            #curr_chat_session.messages.append(new_message)
+            #db.session.commit()
         return redirect(url_for('chat_session', chat_session_id=curr_chat_session.id))
 
     return render_template('chat.html', user_chat_sessions=user_chat_sessions, current_chat_session=curr_chat_session, messages=messages)
 
-
-# Load more messages for chat.html current chat session
-'''@bp.route('/load_more_messages/<int:chat_session_id>/<int:last_message_id>')
+# Message user GPT
+@bp.route('/message/<int:receiver_id>', methods=['GET', 'POST'])
 @login_required
-def load_more_messages(chat_session_id, last_message_id):
-    chat_session = ChatSession.query.get_or_404(chat_session_id)
-    more_messages = load_more_messages(chat_session, last_message_id)
+def message_user(receiver_id):
+    existing_chat_session = get_existing_chat_session(receiver_id)
+    if existing_chat_session:
+        return redirect(url_for('main.chat_session', chat_session_id=existing_chat_session.id))
+    else:
+        return redirect(url_for('main.create_chat_session', receiver_id=receiver_id))
+def get_existing_chat_session(receiver_id):
+    # Find an existing ChatSession between current_user and the user with receiver_id
+    user1_id = current_user.id
+    user2_id = receiver_id
+    chat_session = ChatSession.query.filter(
+        ((ChatSession.user1_id == user1_id) & (ChatSession.user2_id == user2_id)) |
+        ((ChatSession.user1_id == user2_id) & (ChatSession.user2_id == user1_id))
+    ).first()
 
-    # Render and return the HTML for the new messages
-    return render_template('_message_list.html', messages=more_messages)'''
+    return chat_session
+
+# Add the 'create_chat_session' route as you've outlined in your original code
+@bp.route('/create-chat-session/<int:receiver_id>')
+@login_required
+def create_chat_session(receiver_id):
+    receiver = User.query.get_or_404(receiver_id)
+    new_chat_session = ChatSession(user1_id=current_user.id, user2_id=receiver.id)
+    db.session.add(new_chat_session)
+    db.session.commit()
+    return redirect(url_for('main.chat_session', chat_session_id=new_chat_session.id))
 
 # Route to display a user's posts. Pass to template to display posts
 #@app.route('/user/<int:user_id>')

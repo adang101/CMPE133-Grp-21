@@ -112,6 +112,21 @@
                             <a href="profile-settings">
                                 <button class="btn profile-edit-btn float-right">Edit Profile</button>
                             </a>
+						{% else %}
+							<div class="button-container">
+								<!-- Message Button -->
+								<a href="{{ url_for('main.message_user', receiver_id=user.id) }}">
+									<button class="btn profile-message-btn">Message</button>
+								</a>
+								<!-- Commission Button -->
+								<a href="commission-request">
+									<button class="btn profile-commission-btn">Commission</button>
+								</a>
+								<!-- Follow Button -->
+								<a href="follow-user">
+									<button class="btn profile-follow-btn">Follow</button>
+								</a>
+							</div>
                         {% endif %}
                     </div> <!-- End of profile user settings -->
                 <!-- Profile Stats -->
