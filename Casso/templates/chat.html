@@ -178,12 +178,20 @@
 						</div>
 					</div> <!-- End chat session messages -->
 					<div class="flex-grow-0 py-3 px-4 border-top" style="height: 100%;"> <!-- Text box -->
-						<form method="post" action="{{ url_for('chat_session', chat_session_id=current_chat_session.id) }}">
+						{% if current_chat_session %}
+							<form method="post" action="{{ url_for('main.chat_session', chat_session_id=current_chat_session.id) }}">
+								<div class="input-group" style="width: 100%">
+									<input id="message-input" type="text" class="form-control" name="message_input" 
+										placeholder="Type your message">
+									<button id="send-button" class="btn btn-primary" type="submit">Send</button>
+								</div>
+							</form>
+						{% else %}
+							<!-- Display a message or some other content when there's no current chat session -->
 							<div class="input-group" style="width: 100%">
-								<input id="message-input" type="text" class="form-control" name="message_input" placeholder="Type your message">
-								<button id="send-button" class="btn btn-primary" type="submit">Send</button>
+								No current chat session to send a message to.
 							</div>
-						</form>
+						{% endif %}
 					</div> <!-- End text box -->
 				</div>
 			</div>
