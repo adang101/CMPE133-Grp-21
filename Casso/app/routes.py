@@ -270,13 +270,6 @@ def user(user_id):
 @bp.route('/chat')
 @login_required
 def default_chat():
-    # return render_template('chat.html')
-    # Retrieve chat sessions for the current user
-    '''user_chat_sessions = ChatSession.query.filter(
-    (ChatSession.user1_id == current_user.id) | (ChatSession.user2_id == current_user.id)
-).outerjoin(Message).group_by(ChatSession).order_by(
-    func.coalesce(func.max(Message.created_at), ChatSession.created_at).asc()
-).all()'''
     # Retrieve chat sessions for the current user
     user_chat_sessions = ChatSession.query.filter(
         (ChatSession.user1_id == current_user.id) | (ChatSession.user2_id == current_user.id)
@@ -321,13 +314,23 @@ def chat_session(chat_session_id):
         # Handle sending a new message (add logic to store the message)
         new_message_content = request.form.get('message_input')
         if new_message_content:
-            new_message = Message(sender_id=current_user.id, receiver_id=curr_chat_session.user2_id, content=new_message_content, chat_session_id=curr_chat_session.id)
+            # Determine if receiver is user1 or user2
+            if curr_chat_session.user1_id == current_user.id:
+                sender_id = curr_chat_session.user1_id
+                receiver_id = curr_chat_session.user2_id
+            else:
+                sender_id = curr_chat_session.user2_id
+                receiver_id = curr_chat_session.user1_id
+
+            new_message = Message(
+                sender_id=sender_id,
+                receiver_id=receiver_id,
+                content=new_message_content,
+                chat_session_id=curr_chat_session.id
+            )
             db.session.add(new_message)
             db.session.commit()
-
-            #curr_chat_session.messages.append(new_message)
-            #db.session.commit()
-        return redirect(url_for('chat_session', chat_session_id=curr_chat_session.id))
+        return redirect(url_for('main.chat_session', chat_session_id=curr_chat_session.id))
 
     return render_template('chat.html', user_chat_sessions=user_chat_sessions, current_chat_session=curr_chat_session, messages=messages)
 
@@ -360,10 +363,3 @@ def create_chat_session(receiver_id):
     db.session.add(new_chat_session)
     db.session.commit()
     return redirect(url_for('main.chat_session', chat_session_id=new_chat_session.id))
-
-# Route to display a user's posts. Pass to template to display posts
-#@app.route('/user/<int:user_id>')
-#def user_profile(user_id):
-#    user = User.query.get(user_id)
- #   user_posts = user.posts  # Get the user's posts
- #   return render_template('user_profile.html', user=user, user_posts=user_posts)

@@ -53,9 +53,9 @@ class User(UserMixin, db.Model):
         backref='receiver', lazy='dynamic') # One to many
     
     messages_sent = db.relationship('Message', foreign_keys='Message.sender_id', 
-        backref='sender', lazy='dynamic') # One to many
+        backref='sent_messages', lazy='dynamic') # One to many
     messages_received = db.relationship('Message', foreign_keys='Message.receiver_id', 
-        backref='receiver', lazy='dynamic') # One to many
+        backref='received_messages', lazy='dynamic') # One to many
     
     chat_sessions_as_user1 = db.relationship('ChatSession', 
         foreign_keys='ChatSession.user1_id', backref='user1', lazy='dynamic')
@@ -109,14 +109,18 @@ class Message(db.Model):
     created_at = db.Column(db.TIMESTAMP, default=db.func.current_timestamp())
     chat_session_id = db.Column(db.Integer, db.ForeignKey('chat_session.id'))
 
+    sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_messages')
+    receiver = db.relationship('User', foreign_keys=[receiver_id], backref='received_messages')
+
     # Assuming chat_session is an instance of the ChatSession model
     # messages_for_chat_session = chat_session.messages.all()
 
-    def __init__(self, sender_id, receiver_id, content, message_type=None):
+    def __init__(self, sender_id, receiver_id, content, chat_session_id):
         self.sender_id = sender_id
         self.receiver_id = receiver_id
         self.content = content
-        self.message_type = message_type
+        self.chat_session_id = chat_session_id
+
 
 # Chat Session model to store user chat sessions
 class ChatSession(db.Model):

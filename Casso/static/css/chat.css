@@ -118,3 +118,6 @@ body{margin-top:20px;}
     border-radius: 5px !important;
     margin-right: 10px;
 }
+.rounded-circle {
+    object-fit: cover;
+}
