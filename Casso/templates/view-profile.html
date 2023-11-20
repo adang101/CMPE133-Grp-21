@@ -123,9 +123,15 @@
 									<button class="btn profile-commission-btn">Commission</button>
 								</a>
 								<!-- Follow Button -->
-								<a href="follow-user">
-									<button class="btn profile-follow-btn">Follow</button>
-								</a>
+								{% if current_user.is_following(user) %}
+									<form action="{{ url_for('main.unfollow_user', user_id=user.id) }}" method="post">
+										<button class="btn profile-follow-btn" type="submit">Unfollow</button>
+									</form>
+								{% else %}
+									<form action="{{ url_for('main.follow_user', user_id=user.id) }}" method="post">
+										<button class="btn profile-follow-btn" type="submit">Follow</button>
+									</form>
+								{% endif %}
 							</div>
                         {% endif %}
                     </div> <!-- End of profile user settings -->

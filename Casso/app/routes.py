@@ -1,6 +1,6 @@
 from flask import render_template, Blueprint, request, redirect, url_for, flash, get_flashed_messages, current_app as app
 from flask_login import login_required, login_user, logout_user, current_user
-from .models import User, db, Post, Message, ChatSession, CommissionRequest
+from .models import User, db, Post, Message, ChatSession, CommissionRequest, Follow
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import func
 import re, os
@@ -363,3 +363,21 @@ def create_chat_session(receiver_id):
     db.session.add(new_chat_session)
     db.session.commit()
     return redirect(url_for('main.chat_session', chat_session_id=new_chat_session.id))
+
+# Handle Follow Request
+@bp.route('/follow/<int:user_id>', methods=['POST'])
+@login_required
+def follow_user(user_id):
+    user_to_follow = User.query.get_or_404(user_id)
+    current_user.follow(user_to_follow)
+    flash(f'You are now following {user_to_follow.username}', 'success')
+    return redirect(url_for('main.user', user_id=user_id))
+
+# Handle Unfollow Request
+@bp.route('/unfollow/<int:user_id>', methods=['POST'])
+@login_required
+def unfollow_user(user_id):
+    user_to_unfollow = User.query.get_or_404(user_id)
+    current_user.unfollow(user_to_unfollow)
+    flash(f'You have unfollowed {user_to_unfollow.username}', 'info')
+    return redirect(url_for('main.user', user_id=user_id))

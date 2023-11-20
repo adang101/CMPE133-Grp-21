@@ -41,7 +41,21 @@ class User(UserMixin, db.Model):
         return True   
     def is_anonymous(self):
         return False
+    def is_following(self, user):
+        return self.following.filter_by(followed_id=user.id).first() is not None
 
+    def follow(self, user):
+        if not self.is_following(user):
+            follow = Follow(follower_id=self.id, followed_id=user.id)
+            db.session.add(follow)
+            db.session.commit()
+
+    def unfollow(self, user):
+        follow = self.following.filter_by(followed_id=user.id).first()
+        if follow:
+            db.session.delete(follow)
+            db.session.commit()
+    
     # User Relationships with other models
     posts = db.relationship('Post', backref='user', lazy=True) # One to many
 
@@ -53,9 +67,9 @@ class User(UserMixin, db.Model):
         backref='receiver', lazy='dynamic') # One to many
     
     messages_sent = db.relationship('Message', foreign_keys='Message.sender_id', 
-        backref='sent_messages', lazy='dynamic') # One to many
+        backref='sent_messages', lazy='dynamic', overlaps="sent_messages") # One to many
     messages_received = db.relationship('Message', foreign_keys='Message.receiver_id', 
-        backref='received_messages', lazy='dynamic') # One to many
+        backref='received_messages', lazy='dynamic', overlaps="received_messages") # One to many
     
     chat_sessions_as_user1 = db.relationship('ChatSession', 
         foreign_keys='ChatSession.user1_id', backref='user1', lazy='dynamic')
@@ -64,11 +78,9 @@ class User(UserMixin, db.Model):
 
     likes = db.relationship('Like', backref='user', lazy='dynamic') # One to many
 
-    followers = db.relationship('Follower', foreign_keys='Follower.followed_id', 
-        backref='followed', lazy='dynamic') # One to many
-    following = db.relationship('Follower', foreign_keys='Follower.follower_id', 
-        backref='follower', lazy='dynamic') # One to many
-    
+    followers = db.relationship('Follow', foreign_keys='Follow.followed_id', backref='followed', lazy='dynamic')
+    following = db.relationship('Follow', foreign_keys='Follow.follower_id', backref='follower', lazy='dynamic')
+
     notifications = db.relationship('Notification', backref='user', lazy='dynamic')
 
 # Post model to store user posts
@@ -109,8 +121,8 @@ class Message(db.Model):
     created_at = db.Column(db.TIMESTAMP, default=db.func.current_timestamp())
     chat_session_id = db.Column(db.Integer, db.ForeignKey('chat_session.id'))
 
-    sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_messages')
-    receiver = db.relationship('User', foreign_keys=[receiver_id], backref='received_messages')
+    sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_messages', overlaps="sent_messages")
+    receiver = db.relationship('User', foreign_keys=[receiver_id], backref='received_messages', overlaps="sent_messages")
 
     # Assuming chat_session is an instance of the ChatSession model
     # messages_for_chat_session = chat_session.messages.all()
@@ -159,6 +171,23 @@ class Follower(db.Model):
         self.follower_id = follower_id
         self.followed_id = followed_id
 
+    @classmethod
+    def is_following(cls, follower_id, followed_id):
+        return cls.query.filter_by(follower_id=follower_id, followed_id=followed_id).first() is not None
+
+    def toggle_follow(self):
+        db.session.delete(self) if self else db.session.add(self)
+        db.session.commit()
+
+# Follow model to store user followers and following
+class Follow(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    follower_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    followed_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def __init__(self, follower_id, followed_id):
+        self.follower_id = follower_id
+        self.followed_id = followed_id
 # Comment model to store user comments on posts
 # Many-to-one relationship with Post model (Each post can have multiple comments)
 class Comment(db.Model):
