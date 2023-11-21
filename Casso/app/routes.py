@@ -309,6 +309,7 @@ def chat_session(chat_session_id):
 
     # Pagination. Work on it later messages = chat_session.messages.order_by(Message.created_at.asc()).limit(14).all()
     messages = curr_chat_session.messages.order_by(Message.created_at.asc()).all()
+    commission_requests = CommissionRequest.query.filter((CommissionRequest.receiver_id == current_user.id)).all()
 
     if request.method == 'POST':
         # Handle sending a new message (add logic to store the message)
@@ -332,7 +333,9 @@ def chat_session(chat_session_id):
             db.session.commit()
         return redirect(url_for('main.chat_session', chat_session_id=curr_chat_session.id))
 
-    return render_template('chat.html', user_chat_sessions=user_chat_sessions, current_chat_session=curr_chat_session, messages=messages)
+    return render_template('chat.html', user_chat_sessions=user_chat_sessions, 
+            current_chat_session=curr_chat_session, messages=messages, 
+            commission_requests=commission_requests)
 
 # Message user GPT
 @bp.route('/message/<int:receiver_id>', methods=['GET', 'POST'])
@@ -371,14 +374,10 @@ def commission_request(receiver_id):
     commissionedUser = User.query.get(receiver_id)
     commissioned_username = commissionedUser.username
     profile_pic = commissionedUser.profile_picture
-
     if request.method == 'POST':
-        # Process the commission request form here
         artwork_dimensions = request.form.get('artwork_dimensions')
         desired_budget = request.form.get('desired_budget')
         commission_details = request.form.get('commission_details')
-
-        # Create a new CommissionRequest instance
         commission_request = CommissionRequest(
             sender_id=current_user.id,
             receiver_id=receiver_id,
@@ -386,22 +385,14 @@ def commission_request(receiver_id):
             desired_budget=desired_budget,
             commission_details=commission_details
         )
-
-        # Add the commission request to the database
         db.session.add(commission_request)
         db.session.commit()
-
-        # Check if the new commission request was added to the database
-        verify_commission_request = CommissionRequest.query.filter_by(commission_description=request.form['commission-description']).first()
-        if verify_commission_request is not None:
-            # If commission request was added, display success message
+        commission_request_in_db = CommissionRequest.query.get(commission_request.id)
+        if commission_request_in_db is not None:
             flash('Your commission request was successfully sent!')
-            # Redirect to login page
             return redirect(url_for('main.message_user', receiver_id=receiver_id, messages=get_flashed_messages()))
         else:
-            # If commission request was not added, display message
             flash('There was an error sending your commission request. Please try again.')
-            # Redirect to sign up page
             return render_template('commission-request.html', commissionedUser=commissionedUser, commissioned_username=commissioned_username, profile_pic=profile_pic, messages=get_flashed_messages())
     return render_template('commission-request.html', commissionedUser=commissionedUser, commissioned_username=commissioned_username, profile_pic=profile_pic)
 

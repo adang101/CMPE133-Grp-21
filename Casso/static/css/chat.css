@@ -82,6 +82,19 @@ body{margin-top:20px;}
     flex-direction: row-reverse;
     margin-left: auto
 }
+
+.chat-message-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+    border-color: #e3e3e3;
+    border-style: solid;
+    border-radius: px;
+    margin-bottom: 20px;
+    border-width: 1px;
+}
+
 .py-3 {
     padding-top: 1rem!important;
     padding-bottom: 1rem!important;
@@ -106,6 +119,57 @@ body{margin-top:20px;}
 .btn {
     padding-bottom: 8px;
     border-radius: 10px;
+}
+/* Commission Details */
+.flex-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.row1 {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    }
+
+.item1 {
+    flex-grow: 1;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.row2 {
+    display: flex;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 5px;
+}
+
+.item2,
+.item3 {
+    flex-grow: 1;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 5px;
+    color: gray;
+    font-size: small;
+}
+
+.btn.btn-accept {
+    background: #000000;
+    color: #ffffff;
+    border-radius: 0px !important;
+  }
+
+.btn.btn-deny {
+    background: #ffffff;
+    color: #000000;
+    border: 1px solid #000000;
+    border-radius: 0px !important;
+  
 }
 
 .input-group {
