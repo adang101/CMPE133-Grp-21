@@ -61,10 +61,10 @@ class User(UserMixin, db.Model):
 
     commission_requests_sent = db.relationship('CommissionRequest', 
         foreign_keys='CommissionRequest.sender_id',
-        backref='sender', lazy='dynamic') # One to many
+        backref='requesting_user')
     commission_requests_received = db.relationship('CommissionRequest', 
         foreign_keys='CommissionRequest.receiver_id',
-        backref='receiver', lazy='dynamic') # One to many
+        backref='commissioned_user')
     
     messages_sent = db.relationship('Message', foreign_keys='Message.sender_id', 
         backref='sent_messages', lazy='dynamic', overlaps="sent_messages") # One to many
@@ -107,9 +107,13 @@ class CommissionRequest(db.Model):
     status = db.Column(db.String(50), default='Pending')
     created_at = db.Column(db.TIMESTAMP, default=db.func.current_timestamp())
 
-    # Additional fields for commission details (add more as needed)
+    artwork_dimensions = db.Column(db.String(50))
+    desired_budget = db.Column(db.String(50))
     commission_details = db.Column(db.String(255))
     payment_status = db.Column(db.String(50), default='Pending')
+
+    sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_commission_requests')
+    receiver = db.relationship('User', foreign_keys=[receiver_id], backref='received_commission_requests')
 
 # Message model to store user messages
 # (Each user can have multiple messages / open chats)

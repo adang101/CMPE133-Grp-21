@@ -1,0 +1,66 @@
+<!--
+ CMPE 133 - Project: Casso
+  Group 21
+    Alvin Dang
+    Binh Vu
+    Jun Jie Lai
+    Lam Vong
+-->
+{% extends "base.html" %}
+
+{% block title %}Casso Home{% endblock %}
+
+{% block content %}
+  <!-- Contact -->
+    <div class="untree_co-section" id="contact-section">
+      <div class="container">
+        <div class="row mb-5">
+          <div class="col-lg-7 text-center mx-auto">
+            <h2 class="section-heading gsap-reveal-hero mb-0"><strong>Commission Request</strong></h2>
+            <p class="gsap-reveal-hero">Enjoying {{ commissioned_username }}'s work? Send a request!</p>
+
+            <div class="wave gsap-reveal-hero" >
+              <svg>
+                <path d="M10,10 L50,100 L90,50" stroke="#0389ff"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <!-- Commission Form -->
+        <div class="row">
+          <div class="col-lg-6">
+            <form action="{{ url_for('main.commission_request', receiver_id=commissionedUser.id) }}" method="POST">
+              <div class="row">
+                <div class="col-lg-6 form-group">
+                    <input type="text" name="artwork_dimensions" class="form-control" placeholder="Artwork Dimensions (pixels/cm/in)">
+                </div>
+                <div class="col-lg-6 form-group">
+                    <input type="text" name="desired_budget" class="form-control" placeholder="Desired Budget (USD)">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-12 form-group">
+                  <textarea name="" name="commission_details" id="" cols="30" rows="7" class="form-control" placeholder="Write your message..."></textarea>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12 form-group">
+                  <input type="submit" class="btn btn-black" value="Send Request">
+                </div>
+              </div>
+            </form>
+          </div>
+          <!-- END Contact Form -->
+
+          <!-- Commissioned User Profile Pic Embed -->
+          <div class="col-lg-6">
+            <div id="map">
+              <iframe src="{{ url_for('static', filename='images/userPhotos/' + profile_pic) }}"></iframe>
+            </div>
+          </div>
+          <!-- END Commissioned User Profile Pic Embed -->
+        </div>
+      </div>
+    </div>
+  <!-- END Contact -->
+ {% endblock %}

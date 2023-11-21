@@ -33,13 +33,13 @@
 											<img src="{{ url_for('static', filename='images/userPhotos/' + chat_session.user2.profile_picture) }}" class="rounded-circle mr-1" alt="{{ chat_session.user2.full_name }}" width="40" height="40">
 											<div class="flex-grow-1 ml-3">
 												{{ chat_session.user2.full_name }}
-												<div class="small"><span class="fas fa-circle chat-online"></span> Online</div>
+												<div class="small"><span class="fas fa-circle chat-online"></span> Open Commission</div>
 											</div>
 										{% else %}
 											<img src="{{ url_for('static', filename='images/userPhotos/' + chat_session.user1.profile_picture) }}" class="rounded-circle mr-1" alt="{{ chat_session.user1.full_name }}" width="40" height="40">
 											<div class="flex-grow-1 ml-3">
 												{{ chat_session.user1.full_name }}
-												<div class="small"><span class="fas fa-circle chat-online"></span> Online</div>
+												<div class="small"><span class="fas fa-circle chat-online"></span> Open Commission</div>
 											</div>
 										{% endif %}
 									</div>

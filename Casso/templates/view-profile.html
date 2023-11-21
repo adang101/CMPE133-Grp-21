@@ -119,7 +119,7 @@
 									<button class="btn profile-message-btn">Message</button>
 								</a>
 								<!-- Commission Button -->
-								<a href="commission-request">
+								<a href="{{ url_for('main.commission_request', receiver_id=user.id) }}">
 									<button class="btn profile-commission-btn">Commission</button>
 								</a>
 								<!-- Follow Button -->

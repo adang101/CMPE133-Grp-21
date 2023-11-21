@@ -289,7 +289,7 @@ def default_chat():
     return render_template('chat.html', user_chat_sessions=user_chat_sessions, current_chat_session=most_recent_chat_session, messages=messages)
 
 # Load chat session for chat.html
-@bp.route('/chat/<int:chat_session_id>', methods=['GET', 'POST'])
+@bp.route('/chat/<int:chat_session_id>')
 @login_required
 def chat_session(chat_session_id):
     curr_chat_session = ChatSession.query.get_or_404(chat_session_id)
@@ -354,7 +354,7 @@ def get_existing_chat_session(receiver_id):
 
     return chat_session
 
-# Add the 'create_chat_session' route as you've outlined in your original code
+# Handle 'create_chat_session' route
 @bp.route('/create-chat-session/<int:receiver_id>')
 @login_required
 def create_chat_session(receiver_id):
@@ -363,6 +363,47 @@ def create_chat_session(receiver_id):
     db.session.add(new_chat_session)
     db.session.commit()
     return redirect(url_for('main.chat_session', chat_session_id=new_chat_session.id))
+
+# Load commission request page
+@bp.route('/commission/<int:receiver_id>', methods=['GET', 'POST'])
+@login_required
+def commission_request(receiver_id):
+    commissionedUser = User.query.get(receiver_id)
+    commissioned_username = commissionedUser.username
+    profile_pic = commissionedUser.profile_picture
+
+    if request.method == 'POST':
+        # Process the commission request form here
+        artwork_dimensions = request.form.get('artwork_dimensions')
+        desired_budget = request.form.get('desired_budget')
+        commission_details = request.form.get('commission_details')
+
+        # Create a new CommissionRequest instance
+        commission_request = CommissionRequest(
+            sender_id=current_user.id,
+            receiver_id=receiver_id,
+            artwork_dimensions=artwork_dimensions,
+            desired_budget=desired_budget,
+            commission_details=commission_details
+        )
+
+        # Add the commission request to the database
+        db.session.add(commission_request)
+        db.session.commit()
+
+        # Check if the new commission request was added to the database
+        verify_commission_request = CommissionRequest.query.filter_by(commission_description=request.form['commission-description']).first()
+        if verify_commission_request is not None:
+            # If commission request was added, display success message
+            flash('Your commission request was successfully sent!')
+            # Redirect to login page
+            return redirect(url_for('main.message_user', receiver_id=receiver_id, messages=get_flashed_messages()))
+        else:
+            # If commission request was not added, display message
+            flash('There was an error sending your commission request. Please try again.')
+            # Redirect to sign up page
+            return render_template('commission-request.html', commissionedUser=commissionedUser, commissioned_username=commissioned_username, profile_pic=profile_pic, messages=get_flashed_messages())
+    return render_template('commission-request.html', commissionedUser=commissionedUser, commissioned_username=commissioned_username, profile_pic=profile_pic)
 
 # Handle Follow Request
 @bp.route('/follow/<int:user_id>', methods=['POST'])
