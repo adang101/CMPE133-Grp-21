@@ -129,39 +129,69 @@
 					</div> <!-- End chat session header -->
 					<div class="position-relative" style="height: 80%;"> <!-- Chat session messages -->
 						<div id="chat-messages" class="chat-messages p-4" style="height: 100%;">
-							<div class="chat-message-center">
-								{% for commission_request in commission_requests %}
-									{% if commission_request.status == 'Pending' %}
-										{% set ns = namespace(sender_id=None, receiver_id=None) %}
-										{% if commission_request.sender_id == current_chat_session.user1.id and commission_request.receiver_id == current_chat_session.user2.id %}
-											{% set ns.sender_id = current_chat_session.user1.id %}
-											{% set ns.receiver_id = current_chat_session.user2.id %}
-										{% elif commission_request.sender_id == current_chat_session.user2.id and commission_request.receiver_id == current_chat_session.user1.id %}
-											{% set ns.sender_id = current_chat_session.user2.id %}
-											{% set ns.receiver_id = current_chat_session.user1.id %}
-										{% endif %}
-										{% if ns.receiver_id == current_user.id %}
-											<!-- Commission request template -->
-											<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-												<div class="font-weight-bold mb-1"><strong>Commission Request</strong><span class="text-primary">.</span></div>
-												<div class="flex-container">
-													<div class="row1"><div class="item1">{{ commission_request.commission_details }}</div></div>
-													<div class="row2">
-														<div class="item2">{{ commission_request.desired_budget }}</div>
-														<div class="item3">{{ commission_request.artwork_dimensions }}</div>
-													</div>
+							{% for commission_request in commission_requests %}
+								{% set ns = namespace(sender_id=None, receiver_id=None) %}
+								{% if commission_request.sender_id == current_chat_session.user1.id and commission_request.receiver_id == current_chat_session.user2.id %}
+									{% set ns.sender_id = current_chat_session.user1.id %}
+									{% set ns.receiver_id = current_chat_session.user2.id %}
+								{% elif commission_request.sender_id == current_chat_session.user2.id and commission_request.receiver_id == current_chat_session.user1.id %}
+									{% set ns.sender_id = current_chat_session.user2.id %}
+									{% set ns.receiver_id = current_chat_session.user1.id %}
+								{% endif %}
+								{% if ns.receiver_id == current_user.id %}
+									<!-- Commission request template -->
+									<div class="chat-message-center">
+										<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
+											<div class="font-weight-bold mb-1"><strong>Commission Request</strong><span class="text-primary">.</span></div>
+											<div class="flex-container">
+												<div class="row1"><div class="item1">{{ commission_request.commission_details }}</div></div>
+												<div class="row2">
+													<div class="item2">Budget: {{ commission_request.desired_budget }}</div>
+													<div class="item3">Dimensions: {{ commission_request.artwork_dimensions }}</div>
+													<div class="item4">Status: {{ commission_request.status }}</div>
 												</div>
+											</div>
+											{% if commission_request.status == 'Pending' %}
 												<form class="commission-form" method="post" action="{{ url_for('main.accept_commission', commission_request_id=commission_request.id) }}">
 													<button type="submit" class="btn btn-accept">Accept</button>
 												</form>
 												<form class="commission-form" method="post" action="{{ url_for('main.deny_commission', commission_request_id=commission_request.id) }}">
 													<button type="submit" class="btn btn-deny">Deny</button>
 												</form>
+											{% elif commission_request.status == 'In Progress' %}
+												<form class="commission-form" method="post" action="">
+													<button type="submit" class="btn btn-accept">Finalize</button>
+												</form>
+											{% else %}
+												<div class="btn btn-deny">Commission Ended<span class="text-primary">.</span></div>
+											{% endif %}
+										</div>
+									</div>
+								{% elif ns.sender_id == current_user.id %}
+									<div class="chat-message-center">
+										<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
+											<div class="font-weight-bold mb-1"><strong>Commission Request</strong><span class="text-primary">.</span></div>
+											<div class="flex-container">
+												<div class="row1"><div class="item1">{{ commission_request.commission_details }}</div></div>
+												<div class="row2">
+													<div class="item2">Budget: {{ commission_request.desired_budget }}</div>
+													<div class="item3">Dimensions: {{ commission_request.artwork_dimensions }}</div>
+													<div class="item4">Status: {{ commission_request.status }}</div>
+												</div>
 											</div>
-										{% endif %}
-									{% endif %}
-								{% endfor %}
-							</div>
+											{% if commission_request.status == 'Pending' %}
+												<div class="btn btn-accept">Waiting for {{ ns.receiver_id.username }} to accept.</div>
+											{% elif commission_request.status == 'In Progress' %}
+												<form class="commission-form" method="post" action="">
+													<button type="submit" class="btn btn-accept">Pay</button>
+												</form>
+											{% else %}
+												<div class="font-weight mb-1"><strong>Commission Ended</strong><span class="text-primary">.</span></div>
+											{% endif %}
+										</div>
+									</div>
+								{% endif %}
+							{% endfor %}
 							{% if messages %}
 								{% set current_date = None %}
 								{% for message in messages %}

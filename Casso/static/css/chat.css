@@ -149,7 +149,8 @@ body{margin-top:20px;}
 }
 
 .item2,
-.item3 {
+.item3,
+.item4 {
     flex-grow: 1;
     padding-left: 10px;
     padding-right: 10px;

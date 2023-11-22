@@ -1,10 +1,11 @@
-from flask import render_template, Blueprint, request, redirect, url_for, flash, get_flashed_messages, current_app as app
+from flask import render_template, Blueprint, request, redirect, url_for, flash, get_flashed_messages, current_app as app, jsonify, abort
 from flask_login import login_required, login_user, logout_user, current_user
 from .models import User, db, Post, Message, ChatSession, CommissionRequest, Follow
 from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import func
 import re, os
 from werkzeug.utils import secure_filename
+import requests
 
 bp = Blueprint('main', __name__)
 
@@ -271,6 +272,34 @@ def user(user_id):
 
     return render_template('view-profile.html', user=user, user_posts=user_posts, name=name, username=username, bio=bio, profile_pic=profile_pic)
 
+# Send new message from Casso Admin to user
+def admin_message(receiving_user, message_content):
+    admin_user = User.query.filter_by(username='Casso Admin').first()
+
+    # Make sure the receiving user is not the admin
+    if receiving_user != admin_user:
+        # Check if a ChatSession already exists between the admin and the user
+        admin_chat_session = ChatSession.query.filter(
+            ((ChatSession.user1_id == admin_user.id) & (ChatSession.user2_id == receiving_user.id)) |
+            ((ChatSession.user1_id == receiving_user.id) & (ChatSession.user2_id == admin_user.id))
+        ).first()
+        if not admin_chat_session:
+            # If no ChatSession exists, create a new one
+            admin_chat_session = ChatSession(user1_id=admin_user.id, user2_id=receiving_user.id)
+            db.session.add(admin_chat_session)
+            db.session.commit()
+
+        # Create a new Message instance for the admin message
+        admin_message = Message(
+            sender_id=admin_user.id,
+            receiver_id=receiving_user.id,
+            content=message_content,
+            chat_session_id=admin_chat_session.id
+        )
+        # Add the message to the database
+        db.session.add(admin_message)
+        db.session.commit()
+
 # Load user chat page w/ admin chat session (Default Chat)
 @bp.route('/chat')
 @login_required
@@ -326,7 +355,6 @@ def chat_session(chat_session_id):
             most_recent_chat_session = chat_session
             most_recent_message_time = most_recent_message.created_at
 
-    # Pagination. Work on it later messages = chat_session.messages.order_by(Message.created_at.asc()).limit(14).all()
     messages = curr_chat_session.messages.order_by(Message.created_at.asc()).all()
     commission_requests = CommissionRequest.query.filter((CommissionRequest.receiver_id == current_user.id)).all()
    
@@ -413,52 +441,13 @@ def commission_request(receiver_id):
             flash('Your commission request was successfully sent!')
 
             # Send an admin message to the users involved in the commission request
-            adminUser = User.query.filter_by(username='Casso Admin').first()
             # Admin message to sender (Current user)
-            if current_user.id != adminUser.id:
-                # Check if a ChatSession already exists between the admin and the user
-                admin_chat_session = ChatSession.query.filter(
-                    ((ChatSession.user1_id == current_user.id) & (ChatSession.user2_id == adminUser.id)) |
-                    ((ChatSession.user1_id == adminUser.id) & (ChatSession.user2_id == current_user.id))
-                ).first()
-                if not admin_chat_session:
-                    # If no ChatSession exists, create a new one
-                    admin_chat_session = ChatSession(user1_id=current_user.id, user2_id=adminUser.id)
-                    db.session.add(admin_chat_session)
-                    db.session.commit()
-                
-                message_to_sender = "You have sent a new commission request to " + commissionedUser.username + "."
-                admin_message_to_sender = Message(
-                    sender_id=adminUser.id,
-                    receiver_id=current_user.id,
-                    content=message_to_sender,
-                    chat_session_id=admin_chat_session.id
-                )
-                db.session.add(admin_message_to_sender)
-                db.session.commit()
+            message_to_sender = "You have sent a new commission request to " + commissionedUser.username + "."
+            admin_message(current_user, message_to_sender)
             # Admin message to receiver (Commissioned user)
-            if commissionedUser.id != adminUser.id:
-                # Check if a ChatSession already exists between the admin and the user
-                admin_chat_session = ChatSession.query.filter(
-                    ((ChatSession.user1_id == commissionedUser.id) & (ChatSession.user2_id == adminUser.id)) |
-                    ((ChatSession.user1_id == adminUser.id) & (ChatSession.user2_id == commissionedUser.id))
-                ).first()
-                if not admin_chat_session:
-                    # If no ChatSession exists, create a new one
-                    admin_chat_session = ChatSession(user1_id=commissionedUser.id, user2_id=adminUser.id)
-                    db.session.add(admin_chat_session)
-                    db.session.commit()
-
-                message_to_receiver = "You have received a new commission request from " + current_user.username + "."
-                admin_message_to_receiver = Message(
-                    sender_id=adminUser.id,
-                    receiver_id=commissionedUser.id,
-                    content=message_to_receiver,
-                    chat_session_id=admin_chat_session.id
-                )
-                db.session.add(admin_message_to_receiver)
-                db.session.commit()
-                
+            message_to_receiver = "You have received a new commission request from " + current_user.username + "."
+            admin_message(commissionedUser, message_to_receiver)
+            
             return redirect(url_for('main.message_user', receiver_id=receiver_id, messages=get_flashed_messages()))
         else:
             flash('There was an error sending your commission request. Please try again.')
@@ -475,8 +464,25 @@ def accept_commission(commission_request_id):
         # Update the status to "In Progress"
         commission_request.status = 'In Progress'
         db.session.commit()
+        # Send an admin message to the users involved in the commission request
+        # Admin message to sender
+        message_to_sender = commission_request.receiver.username + " has accepted your commission request. The details of which are: \n" + commission_request.commission_details + "\nIt's status has been set to 'In Progress'."
+        admin_message(commission_request.sender, message_to_sender)
+        # Admin message to receiver
+        message_to_receiver = "You have accepted the commission request from " + commission_request.sender.username + ".\n It's status has been set to 'In Progress'."
+        admin_message(commission_request.receiver, message_to_receiver)
 
-    return redirect(url_for('main.chat_session', chat_session_id=commission_request.chat_session_id))
+    # Check if a ChatSession already exists between the admin and the user
+    chat_session = ChatSession.query.filter(
+        ((ChatSession.user1_id == commission_request.sender.id) & (ChatSession.user2_id == commission_request.receiver.id)) |
+        ((ChatSession.user1_id == commission_request.receiver.id) & (ChatSession.user2_id == commission_request.sender.id))
+    ).first()
+    if not chat_session:
+        # If no ChatSession exists, create a new one
+        chat_session = ChatSession(user1_id=commission_request.receiver.id, user2_id=commission_request.sender.id)
+        db.session.add(chat_session)
+        db.session.commit()
+    return redirect(url_for('main.chat_session', chat_session_id=chat_session.id))
 
 @bp.route('/deny_commission/<int:commission_request_id>', methods=['POST'])
 @login_required
@@ -486,10 +492,27 @@ def deny_commission(commission_request_id):
     # Check if the current user is the receiver of the commission request
     if commission_request.receiver_id == current_user.id:
         # Update the status to "Denied"
-        commission_request.status = 'Denied'
+        commission_request.status = 'Declined'
         db.session.commit()
+        # Send an admin message to the users involved in the commission request
+        # Admin message to sender
+        message_to_sender = commission_request.receiver.username + " has declined your commission request. The details of which are: \n" + commission_request.commission_details + "\nIt's status has been set to 'Declined'."
+        admin_message(commission_request.sender, message_to_sender)
+        # Admin message to receiver
+        message_to_receiver = "You have declined the commission request from " + commission_request.sender.username + ".\n It's status has been set to 'Declined'."
+        admin_message(commission_request.receiver, message_to_receiver)
 
-    return redirect(url_for('main.chat_session', chat_session_id=commission_request.chat_session_id))
+    # Check if a ChatSession already exists between the admin and the user
+    chat_session = ChatSession.query.filter(
+        ((ChatSession.user1_id == commission_request.sender.id) & (ChatSession.user2_id == commission_request.receiver.id)) |
+        ((ChatSession.user1_id == commission_request.receiver.id) & (ChatSession.user2_id == commission_request.sender.id))
+    ).first()
+    if not chat_session:
+        # If no ChatSession exists, create a new one
+        chat_session = ChatSession(user1_id=commission_request.receiver.id, user2_id=commission_request.sender.id)
+        db.session.add(chat_session)
+        db.session.commit()
+    return redirect(url_for('main.chat_session', chat_session_id=chat_session.id))
 
 # Handle Follow Request
 @bp.route('/follow/<int:user_id>', methods=['POST'])
