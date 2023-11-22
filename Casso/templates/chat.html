@@ -33,13 +33,13 @@
 											<img src="{{ url_for('static', filename='images/userPhotos/' + chat_session.user2.profile_picture) }}" class="rounded-circle mr-1" alt="{{ chat_session.user2.full_name }}" width="40" height="40">
 											<div class="flex-grow-1 ml-3">
 												{{ chat_session.user2.full_name }}
-												<div class="small"><span class="fas fa-circle chat-online"></span> Open Commission</div>
+												<div class="small"><span class="fas fa-circle chat-online"></span></div>
 											</div>
 										{% else %}
 											<img src="{{ url_for('static', filename='images/userPhotos/' + chat_session.user1.profile_picture) }}" class="rounded-circle mr-1" alt="{{ chat_session.user1.full_name }}" width="40" height="40">
 											<div class="flex-grow-1 ml-3">
 												{{ chat_session.user1.full_name }}
-												<div class="small"><span class="fas fa-circle chat-online"></span> Open Commission</div>
+												<div class="small"><span class="fas fa-circle chat-online"></span></div>
 											</div>
 										{% endif %}
 									</div>
@@ -129,6 +129,39 @@
 					</div> <!-- End chat session header -->
 					<div class="position-relative" style="height: 80%;"> <!-- Chat session messages -->
 						<div id="chat-messages" class="chat-messages p-4" style="height: 100%;">
+							<div class="chat-message-center">
+								{% for commission_request in commission_requests %}
+									{% if commission_request.status == 'Pending' %}
+										{% set ns = namespace(sender_id=None, receiver_id=None) %}
+										{% if commission_request.sender_id == current_chat_session.user1.id and commission_request.receiver_id == current_chat_session.user2.id %}
+											{% set ns.sender_id = current_chat_session.user1.id %}
+											{% set ns.receiver_id = current_chat_session.user2.id %}
+										{% elif commission_request.sender_id == current_chat_session.user2.id and commission_request.receiver_id == current_chat_session.user1.id %}
+											{% set ns.sender_id = current_chat_session.user2.id %}
+											{% set ns.receiver_id = current_chat_session.user1.id %}
+										{% endif %}
+										{% if ns.receiver_id == current_user.id %}
+											<!-- Commission request template -->
+											<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
+												<div class="font-weight-bold mb-1"><strong>Commission Request</strong><span class="text-primary">.</span></div>
+												<div class="flex-container">
+													<div class="row1"><div class="item1">{{ commission_request.commission_details }}</div></div>
+													<div class="row2">
+														<div class="item2">{{ commission_request.desired_budget }}</div>
+														<div class="item3">{{ commission_request.artwork_dimensions }}</div>
+													</div>
+												</div>
+												<form class="commission-form" method="post" action="{{ url_for('main.accept_commission', commission_request_id=commission_request.id) }}">
+													<button type="submit" class="btn btn-accept">Accept</button>
+												</form>
+												<form class="commission-form" method="post" action="{{ url_for('main.deny_commission', commission_request_id=commission_request.id) }}">
+													<button type="submit" class="btn btn-deny">Deny</button>
+												</form>
+											</div>
+										{% endif %}
+									{% endif %}
+								{% endfor %}
+							</div>
 							{% if messages %}
 								{% set current_date = None %}
 								{% for message in messages %}
@@ -139,33 +172,7 @@
 										</div>
 										{% set current_date = message.created_at.strftime('%Y-%m-%d') %}
 									{% endif %}
-										<div class="chat-message-center">
-											{% for commission_request in commission_requests %}
-												{% set ns = namespace(sender_id=None, receiver_id=None) %}
-												{% if commission_request.sender_id == current_chat_session.user1.id %}
-													{% set ns.sender_id = current_chat_session.user1.id %}
-													{% set ns.receiver_id = current_chat_session.user2.id %}
-												{% else %}
-													{% set ns.sender_id = current_chat_session.user2.id %}
-													{% set ns.receiver_id = current_chat_session.user1.id %}
-												{% endif %}
-												{% if ns.receiver_id == current_user.id %}
-													<!-- Commission request template -->
-													<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-														<div class="font-weight-bold mb-1"><strong>Commission Request</strong><span class="text-primary">.</span></div>
-														<div class="flex-container">
-															<div class="row1"><div class="item1">{{ commission_request.artwork_dimensions }}</div></div>
-															<div class="row2">
-																<div class="item2">{{ commission_request.desired_budget }}</div>
-																<div class="item3">{{ commission_request.artwork_dimensions }}</div>
-															</div>
-														</div>
-														<button class="btn btn-accept">Accept</button>
-														<button class="btn btn-deny">Deny</button>
-													</div>
-												{% endif %}
-											{% endfor %}
-										</div>
+										
 									{% if message.sender_id == current_user.id %}
 										<!-- current_user message template -->
 										<div class="chat-message-right pb-4">

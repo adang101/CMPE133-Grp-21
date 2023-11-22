@@ -149,8 +149,6 @@ class CommissionRequest(db.Model):
     commission_details = db.Column(db.String(255))
     payment_status = db.Column(db.String(50), default='Pending')
 
-    '''sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_commission_requests')
-    receiver = db.relationship('User', foreign_keys=[receiver_id], backref='received_commission_requests')'''
     sender = db.relationship('User', foreign_keys=[sender_id], back_populates='commission_requests_sent')
     receiver = db.relationship('User', foreign_keys=[receiver_id], back_populates='commission_requests_received')
 

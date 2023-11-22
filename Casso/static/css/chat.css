@@ -158,6 +158,16 @@ body{margin-top:20px;}
     font-size: small;
 }
 
+.commission-form {
+    display: inline; /* or inline if you want them on the same line without breaking */
+    margin-top: 10px; /* Adjust as needed for spacing */
+}
+
+/* Optionally, you can style the buttons for better appearance */
+.btn-accept, .btn-deny {
+    margin-right: 5px; /* Adjust as needed for spacing between buttons */
+}
+
 .btn.btn-accept {
     background: #000000;
     color: #ffffff;
