@@ -30,7 +30,6 @@ class User(UserMixin, db.Model):
         self.password = password
         self.biography = biography
         self.profile_picture = profile_picture
-    
     def get_id(self): 
         return super().get_id()    
     def get(user_id):
@@ -43,13 +42,11 @@ class User(UserMixin, db.Model):
         return False
     def is_following(self, user):
         return self.following.filter_by(followed_id=user.id).first() is not None
-
     def follow(self, user):
         if not self.is_following(user):
             follow = Follow(follower_id=self.id, followed_id=user.id)
             db.session.add(follow)
             db.session.commit()
-
     def unfollow(self, user):
         follow = self.following.filter_by(followed_id=user.id).first()
         if follow:
@@ -57,21 +54,42 @@ class User(UserMixin, db.Model):
             db.session.commit()
     
     # User Relationships with other models
-    posts = db.relationship('Post', backref='user', lazy=True) # One to many
+    #posts = db.relationship('Post', backref='user', lazy=True) # One to many
+    posts = db.relationship('Post', backref='user', lazy=True, cascade='all, delete-orphan')
 
-    commission_requests_sent = db.relationship('CommissionRequest', 
+    '''commission_requests_sent = db.relationship('CommissionRequest', 
         foreign_keys='CommissionRequest.sender_id',
-        backref='requesting_user')
+        backref=db.backref('requesting_user', lazy='dynamic', uselist=True, back_populates='sender')
+    )
     commission_requests_received = db.relationship('CommissionRequest', 
         foreign_keys='CommissionRequest.receiver_id',
-        backref='commissioned_user')
+        backref=db.backref('commissioned_user', lazy='dynamic', uselist=True, back_populates='receiver')
+    )'''
+    commission_requests_sent = db.relationship('CommissionRequest',
+        foreign_keys='CommissionRequest.sender_id',
+        back_populates='sender',
+        lazy='dynamic',
+        cascade='all, delete-orphan')
+    commission_requests_received = db.relationship('CommissionRequest',
+        foreign_keys='CommissionRequest.receiver_id',
+        back_populates='receiver',
+        lazy='dynamic',
+        cascade='all, delete-orphan')
     
-    messages_sent = db.relationship('Message', foreign_keys='Message.sender_id', 
-        backref='sent_messages', lazy='dynamic', overlaps="sent_messages") # One to many
-    messages_received = db.relationship('Message', foreign_keys='Message.receiver_id', 
-        backref='received_messages', lazy='dynamic', overlaps="received_messages") # One to many
+    messages_sent = db.relationship('Message', 
+        foreign_keys='Message.sender_id', 
+        backref='sent_messages', 
+        lazy='dynamic', 
+        overlaps="sent_messages",
+        cascade='all, delete-orphan')
+    messages_received = db.relationship('Message', 
+        foreign_keys='Message.receiver_id', 
+        backref='received_messages', 
+        lazy='dynamic',
+        overlaps="received_messages",
+        cascade='all, delete-orphan')
     
-    chat_sessions_as_user1 = db.relationship('ChatSession', 
+    '''chat_sessions_as_user1 = db.relationship('ChatSession', 
         foreign_keys='ChatSession.user1_id', backref='user1', lazy='dynamic')
     chat_sessions_as_user2 = db.relationship('ChatSession', 
         foreign_keys='ChatSession.user2_id', backref='user2', lazy='dynamic')
@@ -81,7 +99,26 @@ class User(UserMixin, db.Model):
     followers = db.relationship('Follow', foreign_keys='Follow.followed_id', backref='followed', lazy='dynamic')
     following = db.relationship('Follow', foreign_keys='Follow.follower_id', backref='follower', lazy='dynamic')
 
-    notifications = db.relationship('Notification', backref='user', lazy='dynamic')
+    notifications = db.relationship('Notification', backref='user', lazy='dynamic')'''
+    chat_sessions_as_user1 = db.relationship('ChatSession',
+        foreign_keys='ChatSession.user1_id',
+        backref='user1',
+        lazy='dynamic',
+        cascade='all, delete-orphan')
+    chat_sessions_as_user2 = db.relationship('ChatSession',
+        foreign_keys='ChatSession.user2_id',
+        backref='user2',
+        lazy='dynamic',
+        cascade='all, delete-orphan')
+    
+    followers = db.relationship('Follow', foreign_keys='Follow.followed_id', 
+        backref='followed', 
+        lazy='dynamic', 
+        cascade='all, delete-orphan')
+    following = db.relationship('Follow', foreign_keys='Follow.follower_id', 
+        backref='follower', 
+        lazy='dynamic', 
+        cascade='all, delete-orphan')
 
 # Post model to store user posts
 # (Each user can have multiple posts)
@@ -112,8 +149,10 @@ class CommissionRequest(db.Model):
     commission_details = db.Column(db.String(255))
     payment_status = db.Column(db.String(50), default='Pending')
 
-    sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_commission_requests')
-    receiver = db.relationship('User', foreign_keys=[receiver_id], backref='received_commission_requests')
+    '''sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_commission_requests')
+    receiver = db.relationship('User', foreign_keys=[receiver_id], backref='received_commission_requests')'''
+    sender = db.relationship('User', foreign_keys=[sender_id], back_populates='commission_requests_sent')
+    receiver = db.relationship('User', foreign_keys=[receiver_id], back_populates='commission_requests_received')
 
 # Message model to store user messages
 # (Each user can have multiple messages / open chats)
@@ -127,6 +166,8 @@ class Message(db.Model):
 
     sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_messages', overlaps="sent_messages")
     receiver = db.relationship('User', foreign_keys=[receiver_id], backref='received_messages', overlaps="sent_messages")
+    chat_session_id = db.Column(db.Integer, db.ForeignKey('chat_session.id'))
+    chat_session = db.relationship('ChatSession', back_populates='messages')
 
     # Assuming chat_session is an instance of the ChatSession model
     # messages_for_chat_session = chat_session.messages.all()
@@ -137,7 +178,6 @@ class Message(db.Model):
         self.content = content
         self.chat_session_id = chat_session_id
 
-
 # Chat Session model to store user chat sessions
 class ChatSession(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -145,7 +185,8 @@ class ChatSession(db.Model):
     user2_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.TIMESTAMP, default=db.func.current_timestamp())
 
-    messages = db.relationship('Message', backref='chat_session', lazy='dynamic')
+    #messages = db.relationship('Message', backref='chat_session', lazy='dynamic')
+    messages = db.relationship('Message', back_populates='chat_session', lazy='dynamic', cascade='all, delete-orphan')
 
     def __init__(self, user1_id, user2_id):
         # Ensure that the current user is always user1

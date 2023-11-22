@@ -310,7 +310,7 @@ def chat_session(chat_session_id):
     # Pagination. Work on it later messages = chat_session.messages.order_by(Message.created_at.asc()).limit(14).all()
     messages = curr_chat_session.messages.order_by(Message.created_at.asc()).all()
     commission_requests = CommissionRequest.query.filter((CommissionRequest.receiver_id == current_user.id)).all()
-
+   
     if request.method == 'POST':
         # Handle sending a new message (add logic to store the message)
         new_message_content = request.form.get('message_input')
