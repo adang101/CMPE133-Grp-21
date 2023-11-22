@@ -414,7 +414,7 @@ def commission_request(receiver_id):
 
             # Send an admin message to the users involved in the commission request
             adminUser = User.query.filter_by(username='Casso Admin').first()
-            # Admin message to sender
+            # Admin message to sender (Current user)
             if current_user.id != adminUser.id:
                 # Check if a ChatSession already exists between the admin and the user
                 admin_chat_session = ChatSession.query.filter(
@@ -427,16 +427,16 @@ def commission_request(receiver_id):
                     db.session.add(admin_chat_session)
                     db.session.commit()
                 
-                message_to_sender = "You have sent a new commission request to " + receiver_id.username + "."
+                message_to_sender = "You have sent a new commission request to " + commissionedUser.username + "."
                 admin_message_to_sender = Message(
                     sender_id=adminUser.id,
-                    receiver_id=receiver_id,
+                    receiver_id=current_user.id,
                     content=message_to_sender,
                     chat_session_id=admin_chat_session.id
                 )
                 db.session.add(admin_message_to_sender)
                 db.session.commit()
-            # Admin message to receiver
+            # Admin message to receiver (Commissioned user)
             if commissionedUser.id != adminUser.id:
                 # Check if a ChatSession already exists between the admin and the user
                 admin_chat_session = ChatSession.query.filter(
