@@ -138,7 +138,7 @@
 									{% set ns.sender_id = current_chat_session.user2.id %}
 									{% set ns.receiver_id = current_chat_session.user1.id %}
 								{% endif %}
-								{% if ns.receiver_id == current_user.id %}
+								{% if ns.receiver_id == current_user.id and commission_request.status != 'Declined' %}
 									<!-- Commission request template -->
 									<div class="chat-message-center">
 										<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
@@ -160,14 +160,12 @@
 												</form>
 											{% elif commission_request.status == 'In Progress' %}
 												<form class="commission-form" method="post" action="">
-													<button type="submit" class="btn btn-accept">Finalize</button>
+													<button type="submit" class="btn btn-accept">Finalize Commission</button>
 												</form>
-											{% else %}
-												<div class="btn btn-deny">Commission Ended<span class="text-primary">.</span></div>
 											{% endif %}
 										</div>
 									</div>
-								{% elif ns.sender_id == current_user.id %}
+								{% elif ns.sender_id == current_user.id and commission_request.status != 'Declined' %}
 									<div class="chat-message-center">
 										<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
 											<div class="font-weight-bold mb-1"><strong>Commission Request</strong><span class="text-primary">.</span></div>
@@ -180,13 +178,12 @@
 												</div>
 											</div>
 											{% if commission_request.status == 'Pending' %}
-												<div class="btn btn-accept">Waiting for {{ ns.receiver_id.username }} to accept.</div>
+												{% set receiving_user = commission_request.receiver %}
+												<div class="btn btn-accept">Waiting for {{ receiving_user.username }} to accept.</div>
 											{% elif commission_request.status == 'In Progress' %}
-												<form class="commission-form" method="post" action="">
-													<button type="submit" class="btn btn-accept">Pay</button>
+												<form class="commission-form" method="post" action="{{ url_for('main.pay_commission', commission_request_id=commission_request.id) }}">
+													<button type="submit" class="btn btn-accept">Pay Now</button>
 												</form>
-											{% else %}
-												<div class="font-weight mb-1"><strong>Commission Ended</strong><span class="text-primary">.</span></div>
 											{% endif %}
 										</div>
 									</div>

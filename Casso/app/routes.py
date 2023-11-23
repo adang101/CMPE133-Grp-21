@@ -356,8 +356,10 @@ def chat_session(chat_session_id):
             most_recent_message_time = most_recent_message.created_at
 
     messages = curr_chat_session.messages.order_by(Message.created_at.asc()).all()
-    commission_requests = CommissionRequest.query.filter((CommissionRequest.receiver_id == current_user.id)).all()
-   
+    commission_requests = CommissionRequest.query.filter((CommissionRequest.receiver_id == current_user.id) | (CommissionRequest.sender_id == current_user.id)).all()
+    for commission_request in commission_requests:
+        print(commission_request.id)
+
     if request.method == 'POST':
         # Handle sending a new message (add logic to store the message)
         new_message_content = request.form.get('message_input')
@@ -513,6 +515,34 @@ def deny_commission(commission_request_id):
         db.session.add(chat_session)
         db.session.commit()
     return redirect(url_for('main.chat_session', chat_session_id=chat_session.id))
+
+@bp.route('/pay_commission/<int:commission_request_id>', methods=['POST'])
+@login_required
+def pay_commission(commission_request_id):
+    commission_request = CommissionRequest.query.get_or_404(commission_request_id)
+    return render_template('payment.html', commission_request=commission_request)
+    '''if commission_request.senderer_id == current_user.id:
+        commission_request.status = 'Paid'
+        db.session.commit()
+        # Send an admin message to the users involved in the commission request
+        # Admin message to sender
+        message_to_sender = commission_request.receiver.username + " has paid for your commission request. The details of which are: \n" + commission_request.commission_details + "\nIt's status has been set to 'Paid'."
+        admin_message(commission_request.sender, message_to_sender)
+        # Admin message to receiver
+        message_to_receiver = "You have paid for the commission request from " + commission_request.sender.username + ".\n It's status has been set to 'Paid'."
+        admin_message(commission_request.receiver, message_to_receiver)
+
+    # Check if a ChatSession already exists between the admin and the user
+    chat_session = ChatSession.query.filter(
+        ((ChatSession.user1_id == commission_request.sender.id) & (ChatSession.user2_id == commission_request.receiver.id)) |
+        ((ChatSession.user1_id == commission_request.receiver.id) & (ChatSession.user2_id == commission_request.sender.id))
+    ).first()
+    if not chat_session:
+        # If no ChatSession exists, create a new one
+        chat_session = ChatSession(user1_id=commission_request.receiver.id, user2_id=commission_request.sender.id)
+        db.session.add(chat_session)
+        db.session.commit()
+    return redirect(url_for('main.chat_session', chat_session_id=chat_session.id))'''
 
 # Handle Follow Request
 @bp.route('/follow/<int:user_id>', methods=['POST'])
