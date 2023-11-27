@@ -177,13 +177,15 @@
 													<div class="item4">Status: {{ commission_request.status }}</div>
 												</div>
 											</div>
-											{% if commission_request.status == 'Pending' %}
-												{% set receiving_user = commission_request.receiver %}
+											{% set receiving_user = commission_request.receiver %}
+											{% if commission_request.status == 'Pending' and commission_request.payment_status == 'Pending' %}
 												<div class="btn btn-accept">Waiting for {{ receiving_user.username }} to accept.</div>
-											{% elif commission_request.status == 'In Progress' %}
+											{% elif commission_request.status == 'In Progress' and commission_request.payment_status == 'Pending' %}
 												<form class="commission-form" method="post" action="{{ url_for('main.pay_commission', commission_request_id=commission_request.id) }}">
 													<button type="submit" class="btn btn-accept">Pay Now</button>
 												</form>
+											{% elif commission_request.status == 'In Progress' and commission_request.payment_status == 'Paid' %}
+												<div class="btn btn-accept">Waiting for {{ receiving_user.username }} to finalize.</div>
 											{% endif %}
 										</div>
 									</div>

@@ -544,48 +544,55 @@ def pay_commission(commission_request_id):
         db.session.commit()
     return redirect(url_for('main.chat_session', chat_session_id=chat_session.id))'''
 
-@bp.route('/confirm_payment', methods=['POST'])
+@bp.route('/confirm_payment/<int:commission_request_id>', methods=['POST'])
 @login_required
-def confirm_payment():
-    sender_id = request.form.get('sender_id')
-    receiver_id = request.form.get('receiver_id')
+def confirm_payment(commission_request_id):
+    # Get the amount from the form and convert from string to int
+    amount_string = request.form.get('amount')
+    amount = int(re.sub(r'[^\d.]', '', amount_string))
+
+    # Get commission_request instance using id
+    commissionRequest = CommissionRequest.query.get_or_404(commission_request_id)
 
     new_payment = Payment(
         card_owner_name=request.form.get('card_owner_name'),
         card_number=request.form.get('cardNumber'),
-        expiry_date=request.form.get('expiry_date'),
+        expiry_date=request.form.get('month') + request.form.get('year'),
         cvv=request.form.get('cvv'),
-        amount=request.form.get('amount'),
-        payer_id=sender_id,
-        payee_id=receiver_id,
-        commission_request_id=request.form.get('commission_request_id')
+        amount=amount,
+        payer_id=commissionRequest.sender_id,
+        payee_id=commissionRequest.receiver_id,
+        commission_request_id=commissionRequest.id
     )
     if not new_payment.card_owner_name:
-        return jsonify({'message': 'Please enter the card owner name.'})
+        flash('Please enter the card owner name.')
+        return redirect(url_for('main.payment-form', chat_session_id=chat_session.id))
     if not new_payment.card_number:
-        return jsonify({'message': 'Please enter the card number.'})
+        flash('Please enter the card number.')
+        return redirect(url_for('main.payment-form', chat_session_id=chat_session.id))
     if not new_payment.expiry_date:
-        return jsonify({'message': 'Please enter the expiry date.'})
+        flash('Please enter the expiry date.')
+        return redirect(url_for('main.payment-form', chat_session_id=chat_session.id))
     if not new_payment.cvv:
-        return jsonify({'message': 'Please enter the CVV.'})
+        flash('Please enter the CVV.')
+        return redirect(url_for('main.payment-form', chat_session_id=chat_session.id))
     if not new_payment:
         flash('There was an error processing your payment. Please try again.')
-        return jsonify({'message': 'There was an error processing your payment. Please try again.'})
+        return redirect(url_for('main.payment-form'), chat_session_id=chat_session.id)
     elif new_payment:
         db.session.add(new_payment)
         db.session.commit()
 
         flash('Your payment was successfully processed!')
-        commission_request = CommissionRequest.query.get_or_404(request.form.get('commission_request_id'))
-        commission_request.status = 'Paid'
+        commissionRequest.payment_status = 'Paid'
         # Send an admin message to the users involved in the commission request
         # Admin message to sender
-        message_to_sender = "You have successfully sent a commission payment to " + commission_request.receiver.username + ". The details of which are: \n" + commission_request.commission_details
-        admin_message(commission_request.sender, message_to_sender)
+        message_to_sender = "You have successfully sent a commission payment to " + commissionRequest.receiver.username + ". The details of which are: \n" + commissionRequest.commission_details
+        admin_message(commissionRequest.sender, message_to_sender)
         # Admin message to receiver
-        message_to_receiver = commission_request.sender.username + " has paid for your commission service! The details of which are: \n" + commission_request.commission_details
-        admin_message(commission_request.receiver, message_to_receiver)
-        return jsonify({'redirect': url_for('bp.default_chat')})
+        message_to_receiver = commissionRequest.sender.username + " has paid for your commission service! The details of which are: \n" + commissionRequest.commission_details
+        admin_message(commissionRequest.receiver, message_to_receiver)
+        return redirect(url_for('main.default_chat'))
 
 # Handle Follow Request
 @bp.route('/follow/<int:user_id>', methods=['POST'])
