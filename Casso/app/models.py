@@ -53,10 +53,7 @@ class User(UserMixin, db.Model):
             db.session.delete(follow)
             db.session.commit()
     
-    # User Relationships with other models
-    #posts = db.relationship('Post', backref='user', lazy=True) # One to many
     posts = db.relationship('Post', backref='user', lazy=True, cascade='all, delete-orphan')
-
     '''commission_requests_sent = db.relationship('CommissionRequest', 
         foreign_keys='CommissionRequest.sender_id',
         backref=db.backref('requesting_user', lazy='dynamic', uselist=True, back_populates='sender')
@@ -73,6 +70,17 @@ class User(UserMixin, db.Model):
     commission_requests_received = db.relationship('CommissionRequest',
         foreign_keys='CommissionRequest.receiver_id',
         back_populates='receiver',
+        lazy='dynamic',
+        cascade='all, delete-orphan')
+    
+    payments_sent = db.relationship('Payment',
+        foreign_keys='Payment.payer_id',
+        back_populates='payer',
+        lazy='dynamic',
+        cascade='all, delete-orphan')
+    payments_received = db.relationship('Payment',
+        foreign_keys='Payment.payee_id',
+        back_populates='payee',
         lazy='dynamic',
         cascade='all, delete-orphan')
     
@@ -148,9 +156,26 @@ class CommissionRequest(db.Model):
     desired_budget = db.Column(db.String(50))
     commission_details = db.Column(db.String(255))
     payment_status = db.Column(db.String(50), default='Pending')
-
+    
+    payment = db.relationship('Payment', back_populates='commission_request', uselist=False)
     sender = db.relationship('User', foreign_keys=[sender_id], back_populates='commission_requests_sent')
     receiver = db.relationship('User', foreign_keys=[receiver_id], back_populates='commission_requests_received')
+
+class Payment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    card_owner_name = db.Column(db.String(255), nullable=False)
+    card_number = db.Column(db.String(16), nullable=False)
+    expiry_date = db.Column(db.String(4), nullable=False)
+    cvv = db.Column(db.String(3), nullable=False)
+    amount = db.Column(db.Integer, nullable=False)
+    payer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    payee_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    commission_request_id = db.Column(db.Integer, db.ForeignKey('commission_request.id'), nullable=False)
+    created_at = db.Column(db.TIMESTAMP, default=db.func.current_timestamp())
+
+    payer = db.relationship('User', foreign_keys=[payer_id], back_populates='payments_sent')
+    payee = db.relationship('User', foreign_keys=[payee_id], back_populates='payments_received')
+    commission_request = db.relationship('CommissionRequest', back_populates='payment')
 
 # Message model to store user messages
 # (Each user can have multiple messages / open chats)
