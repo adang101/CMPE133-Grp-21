@@ -55,14 +55,7 @@ class User(UserMixin, db.Model):
             db.session.commit()
     
     posts = db.relationship('Post', backref='user', lazy=True, cascade='all, delete-orphan')
-    '''commission_requests_sent = db.relationship('CommissionRequest', 
-        foreign_keys='CommissionRequest.sender_id',
-        backref=db.backref('requesting_user', lazy='dynamic', uselist=True, back_populates='sender')
-    )
-    commission_requests_received = db.relationship('CommissionRequest', 
-        foreign_keys='CommissionRequest.receiver_id',
-        backref=db.backref('commissioned_user', lazy='dynamic', uselist=True, back_populates='receiver')
-    )'''
+
     commission_requests_sent = db.relationship('CommissionRequest',
         foreign_keys='CommissionRequest.sender_id',
         back_populates='sender',
@@ -98,17 +91,6 @@ class User(UserMixin, db.Model):
         overlaps="received_messages",
         cascade='all, delete-orphan')
     
-    '''chat_sessions_as_user1 = db.relationship('ChatSession', 
-        foreign_keys='ChatSession.user1_id', backref='user1', lazy='dynamic')
-    chat_sessions_as_user2 = db.relationship('ChatSession', 
-        foreign_keys='ChatSession.user2_id', backref='user2', lazy='dynamic')
-
-    likes = db.relationship('Like', backref='user', lazy='dynamic') # One to many
-
-    followers = db.relationship('Follow', foreign_keys='Follow.followed_id', backref='followed', lazy='dynamic')
-    following = db.relationship('Follow', foreign_keys='Follow.follower_id', backref='follower', lazy='dynamic')
-
-    notifications = db.relationship('Notification', backref='user', lazy='dynamic')'''
     chat_sessions_as_user1 = db.relationship('ChatSession',
         foreign_keys='ChatSession.user1_id',
         backref='user1',
