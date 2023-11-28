@@ -1,4 +1,4 @@
-from flask import render_template, Blueprint, request, redirect, url_for, flash, get_flashed_messages, current_app as app, jsonify, abort
+from flask import render_template, Blueprint, request, redirect, url_for, flash, get_flashed_messages, current_app as app, jsonify, abort, send_from_directory
 from flask_login import login_required, login_user, logout_user, current_user
 from .models import User, db, Post, Message, ChatSession, CommissionRequest, Follow, Payment
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -132,6 +132,16 @@ def profile():
     user_commission_requests = CommissionRequest.query.filter(
         (CommissionRequest.sender_id == current_user.id) | (CommissionRequest.receiver_id == current_user.id)
     ).all()
+    user_commissions_received = CommissionRequest.query.filter(
+        (CommissionRequest.receiver_id == current_user.id)
+    ).all()
+    user_commissions_sent = CommissionRequest.query.filter(
+        (CommissionRequest.sender_id == current_user.id)
+    ).all()
+
+    user_posts = current_user.posts  # Get the user's posts
+    user_followers = current_user.followers.all()
+    user_following = current_user.following.all()
 
     # Load admin chat session
     admin_chat_session = None
@@ -148,8 +158,10 @@ def profile():
             db.session.add(admin_chat_session)
             db.session.commit()
         messages = admin_chat_session.messages.order_by(Message.created_at.desc()).all()
+    else:
+        messages = None
 
-    return render_template('profile-settings.html', commission_requests=user_commission_requests, chat_session=admin_chat_session, messages=messages)
+    return render_template('profile-settings.html', commission_requests=user_commission_requests, chat_session=admin_chat_session, messages=messages, commissions_received=user_commissions_received, posts=user_posts, followers=user_followers, following=user_following, commissions_sent=user_commissions_sent)
 
 @bp.route('/update-profile', methods=['POST'])
 @login_required
@@ -210,6 +222,8 @@ def update_profile():
             db.session.add(admin_chat_session)
             db.session.commit()
         messages = admin_chat_session.messages.order_by(Message.created_at.desc()).all()
+    else:
+        messages = None
 
     return render_template('profile-settings.html', messages=messages)
 
@@ -340,7 +354,15 @@ def current_user_profile():
     bio = user.biography
     profile_pic = user.profile_picture
 
-    return render_template('view-profile.html', user=user, user_posts=user_posts, name=name, username=username, bio=bio, profile_pic=profile_pic)
+    # Explicitly load followers and following relationships
+    user_followers = user.followers.all()
+    user_following = user.following.all()
+
+    # Explicitly load the commissions
+    user_commissions = CommissionRequest.query.filter(
+        (CommissionRequest.receiver_id == user.id)
+    ).all()
+    return render_template('view-profile.html', user=user, user_posts=user_posts, name=name, username=username, bio=bio, profile_pic=profile_pic, user_followers=user_followers, user_following=user_following, user_commissions=user_commissions)
 
 # Load X user profile views
 @bp.route('/user/<int:user_id>')
@@ -352,7 +374,15 @@ def user(user_id):
     bio = user.biography
     profile_pic = user.profile_picture
 
-    return render_template('view-profile.html', user=user, user_posts=user_posts, name=name, username=username, bio=bio, profile_pic=profile_pic)
+    # Explicitly load followers and following relationships
+    user_followers = user.followers.all()
+    user_following = user.following.all()
+
+    # Explicitly load the commissions
+    user_commissions = CommissionRequest.query.filter(
+        (CommissionRequest.receiver_id == user.id)
+    ).all()
+    return render_template('view-profile.html', user=user, user_posts=user_posts, name=name, username=username, bio=bio, profile_pic=profile_pic, user_followers=user_followers, user_following=user_following, user_commissions=user_commissions)
 
 # Send new message from Casso Admin to user
 def admin_message(receiving_user, message_content):
@@ -405,6 +435,8 @@ def default_chat():
             db.session.add(admin_chat_session)
             db.session.commit()
         messages = admin_chat_session.messages.order_by(Message.created_at.asc()).all()
+    else:
+        messages = None
     return render_template('chat.html', user_chat_sessions=user_chat_sessions, current_chat_session=admin_chat_session, messages=messages)
 
 # Load chat session for chat.html
@@ -446,7 +478,8 @@ def chat_session(chat_session_id):
         else:
             sender_id = curr_chat_session.user2_id
             receiver_id = curr_chat_session.user1_id
-        if new_message_content:
+
+        '''if new_message_content:
             new_message = Message(
                 sender_id=sender_id,
                 receiver_id=receiver_id,
@@ -455,8 +488,8 @@ def chat_session(chat_session_id):
             )
             db.session.add(new_message)
             db.session.commit()
-            print("Entered new_message_content")
-        elif file and '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']:
+            print("Entered new_message_content")'''
+        if file and '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']:
             # Generate a unique filename for the uploaded picture, e.g., based on the message ID
             filename = secure_filename(f"{uuid.uuid4()}_{file.filename}")
             file.save(os.path.join(app.config['UPLOAD_FOLDER_CHAT'], filename))
@@ -466,12 +499,23 @@ def chat_session(chat_session_id):
             new_message = Message(
                 sender_id=sender_id,
                 receiver_id=receiver_id,
-                content='',
+                content=new_message_content,
                 file_path=filename,
                 chat_session_id=curr_chat_session.id
             )
             db.session.add(new_message)
             db.session.commit()
+        elif new_message_content:
+            new_message = Message(
+                sender_id=sender_id,
+                receiver_id=receiver_id,
+                content=new_message_content,
+                chat_session_id=curr_chat_session.id
+            )
+            db.session.add(new_message)
+            db.session.commit()
+            print("Entered new_message_content")
+        
         return redirect(url_for('main.chat_session', chat_session_id=curr_chat_session.id))
 
     return render_template('chat.html', user_chat_sessions=user_chat_sessions, 
@@ -685,6 +729,49 @@ def confirm_payment(commission_request_id):
         message_to_receiver = commissionRequest.sender.username + " has paid for your commission service! The details of which are: \n" + commissionRequest.commission_details
         admin_message(commissionRequest.receiver, message_to_receiver)
         return redirect(url_for('main.default_chat'))
+# 'main.complete_commission', commission_request_id=commission_request.id)
+@bp.route('/complete_commission/<int:commission_request_id>', methods=['POST'])
+@login_required
+def complete_commission(commission_request_id):
+    commission_request = CommissionRequest.query.get_or_404(commission_request_id)
+
+    # Check if the current user is the receiver of the commission request
+    if commission_request.receiver_id == current_user.id:
+        # Update the status to "Denied"
+        commission_request.status = 'Completed'
+        db.session.commit()
+        # Send an admin message to the users involved in the commission request
+        # Admin message to sender
+        message_to_sender = commission_request.receiver.username + " has finalized your commission request. The details of which are: \n" + commission_request.commission_details + "\nIt's status has been set to 'Completed'."
+        admin_message(commission_request.sender, message_to_sender)
+        # Admin message to receiver
+        message_to_receiver = "You have finalized the commission request from " + commission_request.sender.username + ".\n It's status has been set to 'Completed'."
+        admin_message(commission_request.receiver, message_to_receiver)
+
+    # Check if a ChatSession already exists between the admin and the user
+    chat_session = ChatSession.query.filter(
+        ((ChatSession.user1_id == commission_request.sender.id) & (ChatSession.user2_id == commission_request.receiver.id)) |
+        ((ChatSession.user1_id == commission_request.receiver.id) & (ChatSession.user2_id == commission_request.sender.id))
+    ).first()
+    if not chat_session:
+        # If no ChatSession exists, create a new one
+        chat_session = ChatSession(user1_id=commission_request.receiver.id, user2_id=commission_request.sender.id)
+        db.session.add(chat_session)
+        db.session.commit()
+    return redirect(url_for('main.chat_session', chat_session_id=chat_session.id))
+
+# Handle download requests
+@bp.route('/download/<file_path>')
+@login_required
+def download_file(file_path):
+    directory = app.config['UPLOAD_FOLDER_CHAT']
+    if not is_valid_filename(file_path):
+        abort(400)  # Bad request - Invalid file path
+    return send_from_directory(directory, file_path, as_attachment=True)
+def is_valid_filename(filename):
+    # Define the allowed characters in the filename
+    allowed_chars = r'^[\w\-. ]+$'
+    return re.match(allowed_chars, filename) is not None
 
 # Handle Follow Request
 @bp.route('/follow/<int:user_id>', methods=['POST'])

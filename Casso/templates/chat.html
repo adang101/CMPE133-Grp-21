@@ -33,13 +33,13 @@
 											<img src="{{ url_for('static', filename='images/userPhotos/' + chat_session.user2.profile_picture) }}" class="rounded-circle mr-1" alt="{{ chat_session.user2.full_name }}" width="40" height="40">
 											<div class="flex-grow-1 ml-3">
 												{{ chat_session.user2.full_name }}
-												<div class="small"><span class="fas fa-circle chat-online"></span></div>
+												<!--<div class="small"><span class="fas fa-circle chat-online"></span></div>-->
 											</div>
 										{% else %}
 											<img src="{{ url_for('static', filename='images/userPhotos/' + chat_session.user1.profile_picture) }}" class="rounded-circle mr-1" alt="{{ chat_session.user1.full_name }}" width="40" height="40">
 											<div class="flex-grow-1 ml-3">
 												{{ chat_session.user1.full_name }}
-												<div class="small"><span class="fas fa-circle chat-online"></span></div>
+												<!--<div class="small"><span class="fas fa-circle chat-online"></span></div>-->
 											</div>
 										{% endif %}
 									</div>
@@ -95,23 +95,33 @@
 							<div class="d-flex align-items-center py-1"> <!-- Display other user's info -->
 								{% if current_chat_session.user1.id == current_user.id %}
 									<div class="position-relative"> <!-- Display user 2 -->
-										<img src="{{ url_for('static', filename='images/userPhotos/' + current_chat_session.user2.profile_picture) }}" 
+										<a href="{{ url_for('main.user', user_id=current_user.id) }}">
+											<img src="{{ url_for('static', filename='images/userPhotos/' + current_chat_session.user2.profile_picture) }}" 
+												class="rounded-circle mr-1" alt="{{ current_chat_session.user2.full_name }}" 
+												width="40" height="40">
+										</a>
+										<!--<img src="{{ url_for('static', filename='images/userPhotos/' + current_chat_session.user2.profile_picture) }}" 
 											class="rounded-circle mr-1" alt="{{ current_chat_session.user2.full_name }}" 
-											width="40" height="40">
+											width="40" height="40">-->
 									</div>
 									<div class="flex-grow-1 pl-3">
 										<strong>{{ current_chat_session.user2.full_name }}</strong>
-										<div class="text-muted small"><em>Typing...</em></div>
+										<!--<div class="text-muted small"><em>Typing...</em></div>-->
 									</div>
 								{% else %}
 									<div class="position-relative"> <!-- Display user 1 -->
-										<img src="{{ url_for('static', filename='images/userPhotos/' + current_chat_session.user1.profile_picture) }}" 
+										<a href="{{ url_for('main.user', user_id=current_chat_session.user1.id) }}">
+											<img src="{{ url_for('static', filename='images/userPhotos/' + current_chat_session.user1.profile_picture) }}" 
+												class="rounded-circle mr-1" alt="{{ current_chat_session.user1.full_name }}" 
+												width="40" height="40">
+										</a>
+										<!--<img src="{{ url_for('static', filename='images/userPhotos/' + current_chat_session.user1.profile_picture) }}" 
 											class="rounded-circle mr-1" alt="{{ current_chat_session.user1.full_name }}" 
-											width="40" height="40">
+											width="40" height="40">-->
 									</div>
 									<div class="flex-grow-1 pl-3">
 										<strong>{{ current_chat_session.user1.full_name }}</strong>
-										<div class="text-muted small"><em>Typing...</em></div>
+										<!--<div class="text-muted small"><em>Typing...</em></div>-->
 									</div>
 								{% endif %}
 								<!--<div>
@@ -141,7 +151,7 @@
 								{% if ns.receiver_id == current_user.id and commission_request.status != 'Declined' %}
 									<!-- Commission request template -->
 									<div class="chat-message-center">
-										<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
+										<div class="flex-shrink-1 rounded py-2 px-3 mr-3">
 											<div class="font-weight-bold mb-1"><strong>Commission Request</strong><span class="text-primary">.</span></div>
 											<div class="flex-container">
 												<div class="row1"><div class="item1">{{ commission_request.commission_details }}</div></div>
@@ -159,7 +169,7 @@
 													<button type="submit" class="btn btn-deny">Deny</button>
 												</form>
 											{% elif commission_request.status == 'In Progress' and commission_request.payment_status == 'Paid' %}
-												<form class="commission-form" method="post" action=""> <!-- Add Completed status -->
+												<form class="commission-form" method="post" action="{{ url_for('main.complete_commission', commission_request_id=commission_request.id) }}">
 													<button type="submit" class="btn btn-accept">Finalize Commission</button>
 												</form>
 											{% elif commission_request.status == 'In Progress' and commission_request.payment_status == 'Pending' %}
@@ -169,7 +179,7 @@
 									</div>
 								{% elif ns.sender_id == current_user.id and commission_request.status != 'Declined' %}
 									<div class="chat-message-center">
-										<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
+										<div class="flex-shrink-1 rounded py-2 px-3 mr-3">
 											<div class="font-weight-bold mb-1"><strong>Commission Request</strong><span class="text-primary">.</span></div>
 											<div class="flex-container">
 												<div class="row1"><div class="item1">{{ commission_request.commission_details }}</div></div>
@@ -194,49 +204,91 @@
 								{% endif %}
 							{% endfor %}
 							{% if messages %}
-								{% set current_date = None %}
+								{% set ns = namespace(current_date=None, current_profile_picture=None, current_messenger=None) %}
 								{% for message in messages %}
-									{% if current_date != message.created_at.strftime('%Y-%m-%d') %}
+									{% if ns.current_date != message.created_at.strftime('%Y-%m-%d') %} <!-- Display Date -->
 										<!-- Display date at the top when it changes -->
 										<div class="text-muted text-center mb-2">
 											{{ message.created_at.strftime('%Y-%m-%d') }}
 										</div>
-										{% set current_date = message.created_at.strftime('%Y-%m-%d') %}
+										{% set ns.current_date = message.created_at.strftime('%Y-%m-%d') %}
 									{% endif %}
-										
-									{% if message.sender_id == current_user.id %}
-										<!-- current_user message template -->
-										<div class="chat-message-right pb-4">
-											<div>
-												<img src="{{ url_for('static', filename='images/userPhotos/' + message.sender.profile_picture) }}" 
+
+									{% if ns.current_profile_picture != message.sender.profile_picture %} <!-- Display profile picture and name -->
+										{% if message.sender_id == current_user.id %}
+											<div class="chat-message-right pb-1">
+												<a href="{{ url_for('main.user', user_id=current_user.id) }}">
+													<img src="{{ url_for('static', filename='images/userPhotos/' + message.sender.profile_picture) }}" 
 													class="rounded-circle mr-1" alt="{{ message.sender.full_name }}" 
 													width="40" height="40">
+												</a>
+												<!--<img src="{{ url_for('static', filename='images/userPhotos/' + message.sender.profile_picture) }}" 
+													class="rounded-circle mr-1" alt="{{ message.sender.full_name }}" 
+													width="40" height="40">-->
+												<div class="flex-shrink-1 rounded py-2 px-3 mr-3">
+													<div class="font-weight-bold mb-1">You</div>
+												</div>
+											</div>
+										{% else %}
+											<div class="chat-message-left pb-1">
+												<a href="{{ url_for('main.user', user_id=message.sender_id) }}">
+													<img src="{{ url_for('static', filename='images/userPhotos/' + message.sender.profile_picture) }}" 
+													class="rounded-circle mr-1" alt="{{ message.sender.full_name }}" 
+													width="40" height="40">
+												</a>
+												<!--<img src="{{ url_for('static', filename='images/userPhotos/' + message.sender.profile_picture) }}" 
+													class="rounded-circle mr-1" alt="{{ message.sender.full_name }}" 
+													width="40" height="40">-->
+												<div class="flex-shrink-1 rounded py-2 px-3 mr-3">
+													<div class="font-weight-bold mb-1">{{ message.sender.full_name }}</div>
+												</div>
+											</div>
+										{% endif %}
+										{% set ns.current_profile_picture = message.sender.profile_picture %}
+										{% set ns.current_messenger = message.sender.full_name %}
+									{% endif %}
+
+									{% if message.sender_id == current_user.id %}
+										<!-- current_user message template -->
+										<div class="chat-message-right">
+											<div>
+												<!--<img src="{{ url_for('static', filename='images/userPhotos/' + message.sender.profile_picture) }}" 
+													class="rounded-circle mr-1" alt="{{ message.sender.full_name }}" 
+													width="40" height="40">-->
 												<div class="text-muted small text-nowrap mt-2">{{ message.created_at.strftime('%H:%M') }}</div>
 											</div>
-											<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-												<div class="font-weight-bold mb-1">You</div>
-												{{ message.content }}
+											<div class="flex-shrink-1 rounded py-2 px-3 mr-3" style="background-color: #1F8AFF !important; border-radius: 10px !important;">
+												<!--<div class="font-weight-bold mb-1">You</div>-->
+												<span style="color: white;">{{ message.content }}</span>
 												{% if message.file_path %}
 													<br>
-													<img src="{{ url_for('static', filename='images/userShareables/' + message.file_path) }}" width="324" height="324">
+													<img src="{{ url_for('static', filename='images/userShareables/' + message.file_path) }}" alt="File" width="324" height="324">
+													<br>
+													<a href="{{ url_for('main.download_file', file_path=message.file_path) }}" download>
+														<button id="download-button" type="submit" class="btn btn-accept" style="width: 324px; margin-top: 5px;">Download</button>
+													</a>
 												{% endif %}
 											</div>
 										</div>
 									{% else %}
 										<!-- Other user message template -->
-										<div class="chat-message-left pb-4">
+										<div class="chat-message-left">
 											<div>
-												<img src="{{ url_for('static', filename='images/userPhotos/' + message.sender.profile_picture) }}" 
+												<!--<img src="{{ url_for('static', filename='images/userPhotos/' + message.sender.profile_picture) }}" 
 													class="rounded-circle mr-1" alt="{{ message.sender.full_name }}" 
-													width="40" height="40">
+													width="40" height="40">-->
 												<div class="text-muted small text-nowrap mt-2">{{ message.created_at.strftime('%H:%M') }}</div>
 											</div>
-											<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-												<div class="font-weight-bold mb-1">{{ message.sender.full_name }}</div>
+											<div class="flex-shrink-1 rounded py-2 px-3 mr-3" style="background-color: #d8d8d8 !important; margin-left: 10px !important; border-radius: 10px !important;">
+												<!--<div class="font-weight-bold mb-1">{{ message.sender.full_name }}</div>-->
 												{{ message.content }} 
 												{% if message.file_path %}
 													<br>
-													<img src="{{ url_for('static', filename='images/userShareables/' + message.file_path) }}" width="324" height="324">
+													<img src="{{ url_for('static', filename='images/userShareables/' + message.file_path) }}" alt="File" width="324" height="324">
+													<br>
+													<a href="{{ url_for('main.download_file', file_path=message.file_path) }}" download>
+														<button id="download-button" type="submit" class="btn btn-accept" style="width: 324px; margin-top: 5px;">Download</button>
+													</a>
 												{% endif %}
 											</div>
 										</div>
@@ -304,8 +356,9 @@
 		</div>
 	</div>
 </div>
-<!-- JS to establish web socket connection & handle incoming msgs -->
+
 <script src="https://kit.fontawesome.com/698be38120.js" crossorigin="anonymous"></script>
+<!-- Attach button -->
 <script>
 	document.getElementById('attach-button').addEventListener('click', function() {
         document.getElementById('file-input').click();

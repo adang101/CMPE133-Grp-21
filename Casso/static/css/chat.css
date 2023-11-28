@@ -81,12 +81,14 @@ body{margin-top:20px;}
 }
 
 .chat-message-left {
-    margin-right: auto
+    margin-right: auto;
+    margin-bottom: 1px;
 }
 
 .chat-message-right {
     flex-direction: row-reverse;
-    margin-left: auto
+    margin-left: auto;
+    margin-bottom: 1px;
 }
 
 .chat-message-center {

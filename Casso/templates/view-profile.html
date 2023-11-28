@@ -138,9 +138,9 @@
                 <!-- Profile Stats -->
                 <div class="profile-stats">
                     <ul>
-                        <li><span class="profile-stat-count">164</span> posts</li>
-                        <li><span class="profile-stat-count">188</span> commissions</li>
-                        <li><span class="profile-stat-count">206</span> following</li>
+                        <li><span class="profile-stat-count">{{ user_posts|length }}</span> posts</li>
+                        <li><span class="profile-stat-count">{{ user_commissions|length }}</span> commissions</li>
+                        <li><span class="profile-stat-count">{{ user_followers|length }}</span> followers</li>
                     </ul>
                 </div> <!-- End of profile stats -->
                 <!-- Profile Bio -->

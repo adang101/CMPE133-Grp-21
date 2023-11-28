@@ -56,16 +56,16 @@
                       </ul>
                       <div class="row text-center mt-4">
                         <div class="col p-2">
-                        <h4 class="mb-1 line-height-5" style="color: black;">154</h4>
-                          <small class="mb-0 font-weight-bold">Projects</small>
+                        <h4 class="mb-1 line-height-5" style="color: black;">{{ commissions_received|length }}</h4>
+                          <small class="mb-0 font-weight-bold">Commissions Received</small>
                         </div>
                           <div class="col p-2">
-                            <h4 class="mb-1 line-height-5" style="color: black;">2.2k</h4>
+                            <h4 class="mb-1 line-height-5" style="color: black;">{{ followers|length }}</h4>
                           <small class="mb-0 font-weight-bold">Followers</small>
                           </div>
                           <div class="col p-2">
-                          <h4 class="mb-1 line-height-5" style="color: black;">9.1k</h4>
-                          <small class="mb-0 font-weight-bold">Views</small>
+                          <h4 class="mb-1 line-height-5" style="color: black;">{{ commissions_sent|length }}</h4>
+                          <small class="mb-0 font-weight-bold">Commissions Sent</small>
                           </div>
                       </div>
                     </div>
@@ -98,8 +98,8 @@
                               </div>
                               <div class="col-md-6">
                                   <h6>Statistics</h6>
-                                  <span class="badge badge-info"><i class="fa fa-user"></i> 900 Followers</span>
-                                  <span class="badge badge-success"><i class="fa fa-palette"></i> 43 Commissions</span>
+                                  <span class="badge badge-info"><i class="fa fa-user"></i> {{ followers|length }} Followers</span>
+                                  <span class="badge badge-success"><i class="fa fa-palette"></i> {{ commission_requests|length }} Commissions</span>
                                   <span class="badge badge-warning"><i class="fa fa-star"></i> 5 Stars</span>
                               </div>
                               <hr>
