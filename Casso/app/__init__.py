@@ -1,13 +1,15 @@
 from flask import Flask, g, request
 from .models import db  # Import your database models
 from flask_migrate import Migrate
+import os
 
 def create_app():
     app = Flask("Casso")
     migrate = Migrate(app, db)
 
     # Database configuration (if you are using a database)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/alvindang/Documents/GitHub/CMPE133-Grp-21/Casso/Casso_database.db'
+    db_path = os.path.join(os.path.dirname(__file__), '..', 'Casso_database.db')
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
     db.init_app(app)
 
     # Create the database tables (if they do not exist)
@@ -15,9 +17,9 @@ def create_app():
         db.create_all()
 
     # Configure the upload folder and allowed extensions
-    app.config['UPLOAD_FOLDER_PROFILE_PICS'] = '/Users/alvindang/Documents/GitHub/CMPE133-Grp-21/Casso/static/images/userPhotos'
-    app.config['UPLOAD_FOLDER_POSTS'] = '/Users/alvindang/Documents/GitHub/CMPE133-Grp-21/Casso/static/images/userPosts'
-    app.config['UPLOAD_FOLDER_CHAT'] = '/Users/alvindang/Documents/GitHub/CMPE133-Grp-21/Casso/static/images/userShareables'
+    app.config['UPLOAD_FOLDER_PROFILE_PICS'] = os.path.join(os.path.dirname(__file__), '..', 'static', 'images', 'userPhotos')
+    app.config['UPLOAD_FOLDER_POSTS'] = os.path.join(os.path.dirname(__file__), '..', 'static', 'images', 'userPosts')
+    app.config['UPLOAD_FOLDER_CHAT'] = os.path.join(os.path.dirname(__file__), '..', 'static', 'images', 'userShareables')
     app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg'}
     
     # Register URL routes (in routes.py)
