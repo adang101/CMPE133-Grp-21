@@ -176,14 +176,13 @@ class Message(db.Model):
     chat_session_id = db.Column(db.Integer, db.ForeignKey('chat_session.id'))
     chat_session = db.relationship('ChatSession', back_populates='messages')
 
-    # Assuming chat_session is an instance of the ChatSession model
-    # messages_for_chat_session = chat_session.messages.all()
-
-    def __init__(self, sender_id, receiver_id, content, chat_session_id):
+    def __init__(self, sender_id, receiver_id, content, chat_session_id, file_path=None):
         self.sender_id = sender_id
         self.receiver_id = receiver_id
         self.content = content
+        self.file_path = file_path
         self.chat_session_id = chat_session_id
+
 
 # Chat Session model to store user chat sessions
 class ChatSession(db.Model):

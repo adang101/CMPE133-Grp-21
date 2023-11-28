@@ -216,6 +216,10 @@
 											<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
 												<div class="font-weight-bold mb-1">You</div>
 												{{ message.content }}
+												{% if message.file_path %}
+													<br>
+													<img src="{{ url_for('static', filename='images/userShareables/' + message.file_path) }}" width="324" height="324">
+												{% endif %}
 											</div>
 										</div>
 									{% else %}
@@ -229,7 +233,11 @@
 											</div>
 											<div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
 												<div class="font-weight-bold mb-1">{{ message.sender.full_name }}</div>
-												{{ message.content }}
+												{{ message.content }} 
+												{% if message.file_path %}
+													<br>
+													<img src="{{ url_for('static', filename='images/userShareables/' + message.file_path) }}" width="324" height="324">
+												{% endif %}
 											</div>
 										</div>
 									{% endif %}
@@ -272,7 +280,7 @@
 					</div> <!-- End chat session messages -->
 					<div class="flex-grow-0 py-3 px-4 border-top" style="height: 100%;"> <!-- Text box -->
 						{% if current_chat_session %}
-							<form method="post" action="{{ url_for('main.chat_session', chat_session_id=current_chat_session.id) }}">
+							<form method="post" action="{{ url_for('main.chat_session', chat_session_id=current_chat_session.id) }}" enctype="multipart/form-data">
 								<div class="input-group" style="width: 100%">
 									<input id="message-input" type="text" class="form-control" name="message_input" 
 										placeholder="Type your message">
@@ -299,26 +307,17 @@
 <!-- JS to establish web socket connection & handle incoming msgs -->
 <script src="https://kit.fontawesome.com/698be38120.js" crossorigin="anonymous"></script>
 <script>
-	/* Pagination, work on this later!!! Add an event listener to the chat-messages div
-	document.addEventListener("DOMContentLoaded", function() {
-        var chatMessages = document.getElementById('chat-messages');
-        chatMessages.addEventListener('scroll', function() {
-            // Check if the user has scrolled to the top
-            if (this.scrollTop === 0) {
-                loadMoreMessages();
-            }
-        });
+	document.getElementById('attach-button').addEventListener('click', function() {
+        document.getElementById('file-input').click();
+    });
 
-        function loadMoreMessages() {
-            // Fetch additional messages using AJAX or other method
-            // ...
-            
-            // Append the new messages to the chat-messages div
-            // For demonstration purposes, let's assume newMessages is an array of message HTML
-            var newMessages = ["<div>New message 1</div>", "<div>New message 2</div>"];
-            chatMessages.innerHTML = newMessages.join('') + chatMessages.innerHTML;
+    document.getElementById('file-input').addEventListener('change', function() {
+        if (this.value) {
+            document.getElementById('attach-button').style.backgroundColor = '#4CAF50';
+        } else {
+            document.getElementById('attach-button').style.backgroundColor = '';
         }
-    });*/
+    });
 </script>
 
 {% endblock %}

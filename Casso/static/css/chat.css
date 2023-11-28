@@ -203,3 +203,7 @@ body{margin-top:20px;}
 .rounded-circle {
     object-fit: cover;
 }
+
+#file-input {
+    display: none;
+}
