@@ -158,10 +158,12 @@
 												<form class="commission-form" method="post" action="{{ url_for('main.deny_commission', commission_request_id=commission_request.id) }}">
 													<button type="submit" class="btn btn-deny">Deny</button>
 												</form>
-											{% elif commission_request.status == 'In Progress' %}
-												<form class="commission-form" method="post" action="">
+											{% elif commission_request.status == 'In Progress' and commission_request.payment_status == 'Paid' %}
+												<form class="commission-form" method="post" action=""> <!-- Add Completed status -->
 													<button type="submit" class="btn btn-accept">Finalize Commission</button>
 												</form>
+											{% elif commission_request.status == 'In Progress' and commission_request.payment_status == 'Pending' %}
+												<div class="btn btn-accept">Waiting for {{ commission_request.sender.username }} to make a payment.</div>
 											{% endif %}
 										</div>
 									</div>
@@ -274,6 +276,11 @@
 								<div class="input-group" style="width: 100%">
 									<input id="message-input" type="text" class="form-control" name="message_input" 
 										placeholder="Type your message">
+									<input type="file" name="file_input" id="file-input">
+									<button id="attach-button" class="btn btn-info" type="button" style="padding-left: 10px; 
+										padding-right: 10px; margin-right: 10px;">
+										<i class="fa-regular fa-square-plus fa-2xl"></i>
+									</button>
 									<button id="send-button" class="btn btn-primary" type="submit">Send</button>
 								</div>
 							</form>
@@ -290,6 +297,7 @@
 	</div>
 </div>
 <!-- JS to establish web socket connection & handle incoming msgs -->
+<script src="https://kit.fontawesome.com/698be38120.js" crossorigin="anonymous"></script>
 <script>
 	/* Pagination, work on this later!!! Add an event listener to the chat-messages div
 	document.addEventListener("DOMContentLoaded", function() {
@@ -314,8 +322,7 @@
 </script>
 
 {% endblock %}
-					<!-- Search box -->
-					<!--<div class="px-4 d-none d-md-block">
+<!-- Search box --> <!--<div class="px-4 d-none d-md-block">
 						<div class="d-flex align-items-center">
 							<div class="flex-grow-1">
 								<input type="text" class="form-control my-3" placeholder="Search...">

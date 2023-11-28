@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy_utils import EmailType
 from sqlalchemy import create_engine
 from sqlalchemy import MetaData, Table, Column, Integer, String, ForeignKey
 from datetime import datetime
@@ -16,7 +17,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     full_name = db.Column(db.String(80), nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    email = db.Column(EmailType, unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     biography = db.Column(db.String(255))
     profile_picture = db.Column(db.String(255), default='default.jpg')
@@ -184,6 +185,7 @@ class Message(db.Model):
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     content = db.Column(db.String(255), nullable=False)
+    file_path = db.Column(db.String(255))
     created_at = db.Column(db.TIMESTAMP, default=db.func.current_timestamp())
     chat_session_id = db.Column(db.Integer, db.ForeignKey('chat_session.id'))
 

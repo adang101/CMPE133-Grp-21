@@ -17,6 +17,8 @@ body{margin-top:20px;}
 @media (min-width: 768px) {
     .msg-container {
         max-height: 430px;
+        margin-left: 40px;
+        margin-right: 40px;
     }
     .chat-messages {
         max-height: 100px;
@@ -30,6 +32,8 @@ body{margin-top:20px;}
 @media (min-width: 977px) {
     .msg-container {
         max-height: 830px;
+        margin-left: 100px;
+        margin-right: 100px;
     }
     .chat-messages {
         max-height: 200px;
@@ -43,6 +47,8 @@ body{margin-top:20px;}
 @media (min-width: 1130px) {
     .msg-container {
         max-height: 780px;
+        margin-left: 150px;
+        margin-right: 150px;
     }
 }
 

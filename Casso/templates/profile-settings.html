@@ -14,95 +14,232 @@
 {% block content %}
   <!-- Page Content -->
   <!-- Page Content -->
-  <div class="untree_co-section untree_co-section-4 pb-0"  id="portfolio-section">
-    <div class="container">
-      <div class="portfolio-single-wrap unslate_co--section" id="portfolio-single-section">
 
-        <div class="portfolio-single-inner">
-          <h2 class="heading-portfolio-single-h2 text-black">Hi {{ current_user.full_name }}!</h2>
-      
-          <!-- Main body -->
-            <div class="container">
-              
-              <!-- Flash messages -->
-              {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                  <ul class="flash-messages">
-                    {% for message in messages %}
-                      <li>{{ message }}</li>
-                    {% endfor %}
-                  </ul>
-                {% endif %}
-              {% endwith %}
+  <!-- End Page Content-->
 
-              <div class="row">
-                <div class="col-lg-6">
-                  <!-- Profile Information -->
-                  <h3 class="heading-portfolio-single-h3 text-black">Profile Information</h3>
-                  <p>{{ current_user.biography }}</p>
-                  <p>Full Name: {{ current_user.full_name }}</p>
-                  <p>Username: {{ current_user.username }}</p>
-                  <p>Password: {{ current_user.password }}</p>
-                  <p>Email: {{ current_user.email }}</p>
-                  <p>Member Since: {{ current_user.member_since }}</p>
-                  <!-- Forms -->
-                  
-                  <!-- Update Biography -->
-                  <form method="POST" action="update-biography">
-                    <div class="form-group">
-                      <label for="biography">Biography:</label>
-                      <textarea class="form-control" id="biography" name="biography"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Update Biography</button>
-                  </form>
-                  <br>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile-settings.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-                  <!-- Change Password -->
-                  <h3 class="heading-portfolio-single-h3 text-black">Change Password</h3>
-                  <form method="POST" action="update-password">
-                    <div class="form-group">
-                      <label for="current_password">Current Password:</label>
-                      <input type="password" class="form-control" id="current_password" name="current_password" required>
+<div class="untree_co-section untree_co-section-4 pb-0"  id="portfolio-section">
+  <div class="container">
+    <div class="portfolio-single-wrap unslate_co--section" id="portfolio-single-section">
+      <div class="row">
+              <div class="col-lg-4">
+                <div class="profile-card-4 z-depth-3">
+                  <div class="card">
+                    <div class="card-body text-center bg-primary rounded-top">
+                      <div class="user-box">
+                        <img class="prof-pic" src="{{ url_for('static', filename='images/userPhotos/' + current_user.profile_picture) }}" alt="user avatar">
+                      </div>
+                    <h5 class="mb-1 text-white">{{ current_user.full_name }}</h5>
+                  </div>
+                    <div class="card-body">
+                      <ul class="list-group shadow-none">
+                      <li class="list-group-item">
+                        <div class="list-icon">
+                          <i class="fa fa-signature"></i>
+                        </div>
+                        <div class="list-details">
+                          <span>{{ current_user.username }}</span>
+                          <small>Username</small>
+                        </div>
+                      </li>
+                      <li class="list-group-item">
+                        <div class="list-icon">
+                          <i class="fa fa-envelope"></i>
+                        </div>
+                        <div class="list-details">
+                          <span>{{ current_user.email }}</span>
+                          <small>Email Address</small>
+                        </div>
+                      </li>
+                      </ul>
+                      <div class="row text-center mt-4">
+                        <div class="col p-2">
+                        <h4 class="mb-1 line-height-5" style="color: black;">154</h4>
+                          <small class="mb-0 font-weight-bold">Projects</small>
+                        </div>
+                          <div class="col p-2">
+                            <h4 class="mb-1 line-height-5" style="color: black;">2.2k</h4>
+                          <small class="mb-0 font-weight-bold">Followers</small>
+                          </div>
+                          <div class="col p-2">
+                          <h4 class="mb-1 line-height-5" style="color: black;">9.1k</h4>
+                          <small class="mb-0 font-weight-bold">Views</small>
+                          </div>
+                      </div>
                     </div>
-                    <div class="form-group">
-                      <label for="new_password">New Password:</label>
-                      <input type="password" class="form-control" id="new_password" name="new_password" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="confirm_password">Confirm New Password:</label>
-                      <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Change Password</button>
-                  </form>
-
-                  <!-- End Forms -->
-                </div>
-      
-                <!-- Profile Picture Placeholder -->
-                <div class="col-lg-6">
-                  <div id="map">
-                    <!-- Profile picture -->
-                    <img src="{{ url_for('static', filename='images/userPhotos/' + current_user.profile_picture) }}" alt="Profile Picture" class="profile-picture">
                   </div>
                 </div>
-                <!-- END Placeholder -->
-                <!-- Add this form to allow users to upload a profile picture -->
-                <form method="POST" action="upload-profile-picture" enctype="multipart/form-data">
-                  <div class="form-group">
-                      <label for="profile_picture">Upload Profile Picture:</label>
-                      <input type="file" class="form-control-file" id="profile_picture" name="profile_picture">
-                  </div>
-                  <button type="submit" class="btn btn-primary">Upload Profile Picture</button>
-                </form>
-
               </div>
-              
+              <div class="col-lg-8">
+                <div class="card z-depth-3">
+                  <div class="card-body">
+                  <ul class="nav nav-pills nav-pills-primary nav-justified">
+                      <li class="nav-item">
+                          <a href="javascript:void();" data-target="#profile" data-toggle="pill" class="nav-link active show"><i class="icon-user"></i> <span class="hidden-xs">Profile</span></a>
+                      </li>
+                      <li class="nav-item">
+                          <a href="javascript:void();" data-target="#messages" data-toggle="pill" class="nav-link"><i class="icon-envelope-open"></i> <span class="hidden-xs">Commission Status</span></a>
+                      </li>
+                      <li class="nav-item">
+                          <a href="javascript:void();" data-target="#edit" data-toggle="pill" class="nav-link"><i class="icon-note"></i> <span class="hidden-xs">Edit Profile</span></a>
+                      </li>
+                  </ul>
+                  <div class="tab-content p-3">
+                      <div class="tab-pane active show" id="profile">
+                          <h5 class="mb-3"><strong>Your Profile</strong></h5>
+                          <div class="row">
+                              <div class="col-md-6">
+                                  <h6>Biography</h6>
+                                  <p style="padding-top: 10px;">
+                                    {{ current_user.biography }}
+                                  </p>
+                              </div>
+                              <div class="col-md-6">
+                                  <h6>Statistics</h6>
+                                  <span class="badge badge-info"><i class="fa fa-user"></i> 900 Followers</span>
+                                  <span class="badge badge-success"><i class="fa fa-palette"></i> 43 Commissions</span>
+                                  <span class="badge badge-warning"><i class="fa fa-star"></i> 5 Stars</span>
+                              </div>
+                              <hr>
+                              <div class="col-md-12">
+                                  <h5 class="mt-2 mb-3"><span class="fa fa-clock-o ion-clock float-right"></span> Latest Activity</h5>
+                                  <table class="table table-hover table-striped">
+                                      <tbody>                         
+                                        {% for message in messages %} <tr>
+                                            <td>
+                                              <span class="float-right font-weight" style="color: gray;">{{ message.created_at.strftime('%m/%d %I:%M %p') }}</span>
+                                              <p style="padding-left: 15px; padding-top: 10px; color: gray;">{{ message.content }}</p>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                      </tbody>
+                                  </table>
+                              </div>
+                          </div>
+                          <!--/row-->
+                      </div>
+                    <div class="tab-pane" id="messages"> <!-- Commission Status -->
+                      <div class="alert alert-info alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert">×</button>
+                        <div class="alert-icon">
+                          <i class="icon-info" style="color: #1a00f3;"></i>
+                        </div>
+                        <div class="alert-message">
+                          <span><strong>Guide:</strong> Status can be displayed as either:<br>
+                            <span class="badge badge-warning">Pending</span>
+                            <span class="badge badge-success">Accepted</span>
+                            <span class="badge badge-danger">Declined</span>
+                            <span class="badge badge-secondary">Completed</span>
+                          </span>
+                        </div>
+                      </div>
+                      <table class="table table-hover table-striped">
+                        <tbody>                                    
+                          {% for commission_request in commission_requests %}
+                              <tr>
+                                  <td>
+                                      <span class="float-right font-weight" style="color: gray;">{{ commission_request.created_at.strftime('%m/%d/%Y %I:%M %p') }}</span>
+                                      <p><strong>Commission Request Details:</strong></p> {{ commission_request.commission_details }}
+                                      <br>
+                                      <p style="padding-left: 15px; padding-top: 10px; color: gray;">
+                                        Status: 
+                                        {% if commission_request.status == 'Pending' %}
+                                          <span class="badge badge-warning">Pending</span>
+                                        {% elif commission_request.status == 'In Progress' %}
+                                          <span class="badge badge-success">Accepted</span>
+                                        {% elif commission_request.status == 'Declined' %}
+                                          <span class="badge badge-danger">Declined</span>
+                                        {% elif commission_request.status == 'Completed' %}
+                                          <span class="badge badge-secondary">Completed</span>
+                                        {% endif %}
+                                        <br>
+                                        Payment Status: 
+                                        {% if commission_request.payment_status == 'Pending' %}
+                                          <span class="badge badge-warning">Pending</span>
+                                        {% elif commission_request.payment_status == 'Paid' %}
+                                          <span class="badge badge-success">Paid</span>
+                                        {% endif %}
+                                        <br>
+                                        Sender: <span class="badge badge-info">{{ commission_request.sender.full_name }}</span>
+                                        <br>
+                                        Receiver: <span class="badge badge-info">{{ commission_request.receiver.full_name }}</span>
+                                      </p>
+                                  </td>
+                              </tr>
+                          {% endfor %}
+                        </tbody> 
+                      </table>
+                    </div>
+                  <div class="tab-pane" id="edit"> <!-- Edit Profile Settings -->
+                    <form action="{{ url_for('main.update_profile') }}" method="post" enctype="multipart/form-data">
+                      <div class="form-group row">
+                        <label class="col-lg-3 col-form-label form-control-label">Full Name</label>
+                          <div class="col-lg-9">
+                            <input class="form-control" type="text" placeholder="{{ current_user.full_name}}" readonly>
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label class="col-lg-3 col-form-label form-control-label">Username</label>
+                          <div class="col-lg-9">
+                              <input class="form-control" type="text" name="username" placeholder="Change username">
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label class="col-lg-3 col-form-label form-control-label">Email</label>
+                          <div class="col-lg-9">
+                              <input class="form-control" type="email" name="email" placeholder="Change email">
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label class="col-lg-3 col-form-label form-control-label">Profile Picture</label>
+                          <div class="col-lg-9">
+                              <input class="form-control" type="file" name="picture" placeholder="Change profile picture">
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label class="col-lg-3 col-form-label form-control-label">Password</label>
+                          <div class="col-lg-9">
+                            <input class="form-control" type="password" name="password" placeholder="New password">
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                        <label class="col-lg-3 col-form-label form-control-label">Confirm password</label>
+                        <div class="col-lg-9">
+                            <input class="form-control" type="password" name="current_password" placeholder="Old password">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                          <label class="col-lg-3 col-form-label form-control-label">Biography</label>
+                          <div class="col-lg-9">
+                            <input class="form-control" type="text" placeholder="Change bio">
+                          </div>
+                      </div>
+                      <div class="form-group row">
+                          <label class="col-lg-3 col-form-label form-control-label"></label>
+                          <div class="col-lg-9">
+                              <input type="reset" class="btn btn-light" value="Cancel">
+                              <input type="button" class="btn btn-secondary" value="Save Changes">
+                          </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
               </div>
             </div>
+          </div>    
         </div>
       </div>
     </div>
-  </div>
-  <!-- End Page Content-->
-
+</div>  
+<!--<a href="javascript:void();" class="badge badge-dark badge-pill">html5</a>
+    <a href="javascript:void();" class="badge badge-dark badge-pill">react</a>
+    <a href="javascript:void();" class="badge badge-dark badge-pill">codeply</a>
+    <a href="javascript:void();" class="badge badge-dark badge-pill">angularjs</a>
+    <a href="javascript:void();" class="badge badge-dark badge-pill">css3</a>
+    <a href="javascript:void();" class="badge badge-dark badge-pill">jquery</a>
+    <a href="javascript:void();" class="badge badge-dark badge-pill">bootstrap</a>
+    <a href="javascript:void();" class="badge badge-dark badge-pill">responsive-design</a>
+    <hr>-->
 {% endblock %}

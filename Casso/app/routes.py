@@ -129,7 +129,74 @@ def sign_up_form():
 @bp.route('/profile-settings')
 @login_required
 def profile():
-    return render_template('profile-settings.html')
+    user_commission_requests = CommissionRequest.query.filter(
+        (CommissionRequest.sender_id == current_user.id) | (CommissionRequest.receiver_id == current_user.id)
+    ).all()
+
+    # Load admin chat session
+    admin_chat_session = None
+    if current_user.username != 'Casso Admin':
+        adminUser = User.query.filter_by(username='Casso Admin').first()
+        # Check if a ChatSession already exists between the admin and the user
+        admin_chat_session = ChatSession.query.filter(
+            ((ChatSession.user1_id == current_user.id) & (ChatSession.user2_id == adminUser.id)) |
+            ((ChatSession.user1_id == adminUser.id) & (ChatSession.user2_id == current_user.id))
+        ).first()
+        if not admin_chat_session:
+            # If no ChatSession exists, create a new one
+            admin_chat_session = ChatSession(user1_id=current_user.id, user2_id=adminUser.id)
+            db.session.add(admin_chat_session)
+            db.session.commit()
+        messages = admin_chat_session.messages.order_by(Message.created_at.desc()).all()
+
+    return render_template('profile-settings.html', commission_requests=user_commission_requests, chat_session=admin_chat_session, messages=messages)
+
+@bp.route('/update-profile', methods=['POST'])
+@login_required
+def update_profile():
+    if 'username' in request.form:
+        current_user.username = request.form['username']
+    if 'email' in request.form:
+        current_user.email = request.form['email']
+    if 'picture' in request.files:
+        file = request.files['profile_picture']
+        if file.filename != '':
+            # Check if the file extension is allowed
+            if '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']:
+                # Generate a unique filename for the uploaded picture, e.g., based on the user's ID
+                filename = f"user_{current_user.id}_{secure_filename(file.filename)}"
+
+                # Ensure the upload folder exists
+                os.makedirs(app.config['UPLOAD_FOLDER_PROFILE_PICS'], exist_ok=True)
+
+                # Save the file to a userPhotos folder in your static directory
+                file.save(os.path.join(app.config['UPLOAD_FOLDER_PROFILE_PICS'], filename))
+
+                # Update the user's profile_picture field with the filename
+                current_user.profile_picture = filename
+            else:
+                flash('File type not allowed. Please upload a PNG, JPG, or JPEG file.')
+    if 'password' in request.form:
+        new_password = request.form['password']
+        check_password = request.form['current_password']
+        # Check if password and check password fields match
+        if check_password_hash(current_user.password, check_password):
+            flash('Your current password was entered incorrectly. Please try again.')
+        else:
+            # Check if confirm password is same as new password
+            confirm_password = request.form['confirm_password']
+            if confirm_password != new_password:
+                flash('Passwords do not match. Please try again.')
+            else:
+                current_user.password = new_password
+                flash('Your password has been updated.')
+    if 'biography' in request.form:
+        current_user.biography = request.form['biography']
+        flash('Your biography has been updated.')
+
+    db.session.commit()
+    flash('Your profile has been updated.')
+    return render_template('profile-settings.html', messages=get_flashed_messages())
 
 # Handle biography form submission
 @bp.route('/update-biography', methods=['POST'])
@@ -308,7 +375,6 @@ def default_chat():
     user_chat_sessions = ChatSession.query.filter(
         (ChatSession.user1_id == current_user.id) | (ChatSession.user2_id == current_user.id)
     ).all()
-
     # Load admin chat session
     admin_chat_session = None
     if current_user.username != 'Casso Admin':
@@ -324,16 +390,6 @@ def default_chat():
             db.session.add(admin_chat_session)
             db.session.commit()
         messages = admin_chat_session.messages.order_by(Message.created_at.asc()).all()
-
-    '''most_recent_chat_session = None
-    most_recent_message_time = None
-    # For each chat session, get the most recent message
-    for chat_session in user_chat_sessions:
-        most_recent_message = Message.query.filter_by(chat_session_id=chat_session.id).order_by(Message.created_at.asc()).first()
-        if most_recent_message and (most_recent_message_time is None or most_recent_message.created_at > most_recent_message_time):
-            most_recent_chat_session = chat_session
-            most_recent_message_time = most_recent_message.created_at
-    messages = most_recent_chat_session.messages.order_by(Message.created_at.asc()).all() if most_recent_chat_session else [] '''
     return render_template('chat.html', user_chat_sessions=user_chat_sessions, current_chat_session=admin_chat_session, messages=messages)
 
 # Load chat session for chat.html
@@ -363,6 +419,7 @@ def chat_session(chat_session_id):
     if request.method == 'POST':
         # Handle sending a new message (add logic to store the message)
         new_message_content = request.form.get('message_input')
+        file = request.files.get('file_input')
         if new_message_content:
             # Determine if receiver is user1 or user2
             if curr_chat_session.user1_id == current_user.id:
@@ -378,8 +435,22 @@ def chat_session(chat_session_id):
                 content=new_message_content,
                 chat_session_id=curr_chat_session.id
             )
-            db.session.add(new_message)
-            db.session.commit()
+        elif file and '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']:
+            # Save the file to a folder (or use cloud storage)
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER_CHAT'], filename)
+            file.save(file_path)
+
+            # Create a message with file information
+            new_message = Message(
+                sender_id=sender_id,
+                receiver_id=receiver_id,
+                content=new_message_content,
+                file_path=file_path,
+                chat_session_id=curr_chat_session.id
+            )
+        db.session.add(new_message)
+        db.session.commit()
         return redirect(url_for('main.chat_session', chat_session_id=curr_chat_session.id))
 
     return render_template('chat.html', user_chat_sessions=user_chat_sessions, 
