@@ -14,7 +14,7 @@ engine = create_engine('sqlite:///Casso_database.db', echo=True)
 
 # User model to store user information
 class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     full_name = db.Column(db.String(80), nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(EmailType, unique=True, nullable=False)
@@ -23,8 +23,7 @@ class User(UserMixin, db.Model):
     profile_picture = db.Column(db.String(255), default='default.jpg')
 
     # Constructor
-    def __init__(self, id, full_name, username, email, password, biography=None, profile_picture=None):
-        self.id = id
+    def __init__(self, full_name, username, email, password, biography=None, profile_picture=None):
         self.full_name = full_name
         self.username = username
         self.email = email

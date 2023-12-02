@@ -59,10 +59,6 @@ def sign_up():
 @bp.route('/sign-up-request', methods=['POST'])
 def sign_up_form():
     if request.method == 'POST':
-        # Query the database to get the total number of users
-        total_users = User.query.count()
-        # Create a new user object ID
-        new_id = total_users + 1
 
         new_full_name = request.form['full-name']
         new_user = request.form['username']
@@ -97,7 +93,7 @@ def sign_up_form():
             return render_template('sign-up.html', messages=get_flashed_messages())
         
         # Create a new User object using form data and add to database
-        new_user = User(id=new_id, 
+        new_user = User(
             full_name = request.form['full-name'],
             username = request.form['username'],
             email = request.form['email'],
