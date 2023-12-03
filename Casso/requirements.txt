@@ -1,3 +1,4 @@
+# Dependencies for all platforms (including macOS and Windows)
 alembic==1.10.4
 asgiref==3.7.2
 bcrypt==4.0.1
@@ -46,3 +47,28 @@ Werkzeug==2.3.7
 wsproto==1.2.0
 WTForms==3.0.1
 zipp==3.15.0
+
+# Dependencies for macOS (including macOS arm64)
+sys_platform == 'darwin': backports.zoneinfo==0.2.1
+sys_platform == 'darwin': pyobjc-framework-SearchKit==9.0.1
+sys_platform == 'darwin': pyobjc-framework-Security==9.0.1
+sys_platform == 'darwin': pyobjc-framework-SecurityFoundation==9.0.1
+sys_platform == 'darwin': pyobjc-framework-SecurityInterface==9.0.1
+sys_platform == 'darwin': pyobjc-framework-ServiceManagement==9.0.1
+sys_platform == 'darwin': pyobjc-framework-ShazamKit==9.0.1
+sys_platform == 'darwin': pyobjc-framework-Social==9.0.1
+sys_platform == 'darwin': pyobjc-framework-SoundAnalysis==9.0.1
+sys_platform == 'darwin': pyobjc-framework-Speech==9.0.1
+sys_platform == 'darwin': pyobjc-framework-SpriteKit==9.0.1
+sys_platform == 'darwin': pyobjc-framework-StoreKit==9.0.1
+sys_platform == 'darwin': pyobjc-framework-SyncServices==9.0.1
+sys_platform == 'darwin': pyobjc-framework-SystemConfiguration==9.0.1
+sys_platform == 'darwin': pyobjc-framework-SystemExtensions==9.0.1
+sys_platform == 'darwin': pyobjc-framework-UniformTypeIdentifiers==9.0.1
+sys_platform == 'darwin': pyobjc-framework-UserNotifications==9.0.1
+sys_platform == 'darwin': pyobjc-framework-UserNotificationsUI==9.0.1
+sys_platform == 'darwin': pyobjc-framework-VideoSubscriberAccount==9.0.1
+sys_platform == 'darwin': pyobjc-framework-VideoToolbox==9.0.1
+sys_platform == 'darwin': pyobjc-framework-Virtualization==9.0.1
+sys_platform == 'darwin': pyobjc-framework-Vision==9.0.1
+sys_platform == 'darwin': pyobjc-framework-WebKit==9.0.1
