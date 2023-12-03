@@ -14,7 +14,7 @@ HOW TO RUN:
       * Your file path should then look like C:\user\pathTo\CMPE133-Grp-21\Casso-Grp21\Casso
 
  * From here, you need to activate the virtual environment to ensure all dependencies are loaded
-      * To do that enter "./venv/bin/activate" on Windows
+      * To do that enter ".\newvenv\Scripts\activate" on Windows
       * On MacOS enter "source ./venv/bin/activate"
 
  * Your path should now look like: (venv) C:\user\pathTo\GitHubDirectory\Casso
