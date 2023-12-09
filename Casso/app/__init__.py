@@ -4,6 +4,9 @@ from flask_migrate import Migrate
 import os, logging
 from logging.handlers import RotatingFileHandler
 
+def get_remote_address():
+    return request.remote_addr
+
 def create_app():
     app = Flask("Casso")
     migrate = Migrate(app, db)

@@ -9,11 +9,8 @@ from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
-
-# Create a database engine
 engine = create_engine('sqlite:///Casso_database.db', echo=True)
 
-# User model to store user information
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     full_name = db.Column(db.String(80), nullable=False)
@@ -23,7 +20,6 @@ class User(UserMixin, db.Model):
     biography = db.Column(db.String(255))
     profile_picture = db.Column(db.String(255), default='default.jpg')
 
-    # Constructor
     def __init__(self, full_name, username, email, password, biography=None, profile_picture=None):
         self.full_name = full_name
         self.username = username
@@ -118,8 +114,6 @@ class User(UserMixin, db.Model):
         lazy='dynamic', 
         cascade='all, delete-orphan')
 
-# Post model to store user posts
-# (Each user can have multiple posts)
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
@@ -130,11 +124,8 @@ class Post(db.Model):
     def image_url(self):
         return url_for('static', filename=f'images/userPosts/{self.image}')
     
-    # Post Relationships with other models
-    likes = db.relationship('Like', backref='post', lazy='dynamic') # One to many
+    likes = db.relationship('Like', backref='post', lazy='dynamic')
 
-# Commission model to store user commissions
-# (Each user can have multiple commissions)
 class CommissionRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -167,8 +158,6 @@ class Payment(db.Model):
     payee = db.relationship('User', foreign_keys=[payee_id], back_populates='payments_received')
     commission_request = db.relationship('CommissionRequest', back_populates='payment')
 
-# Message model to store user messages
-# (Each user can have multiple messages / open chats)
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -190,36 +179,20 @@ class Message(db.Model):
         self.file_path = file_path
         self.chat_session_id = chat_session_id
 
-
-# Chat Session model to store user chat sessions
 class ChatSession(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user1_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user2_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.TIMESTAMP, default=db.func.current_timestamp())
 
-    #messages = db.relationship('Message', backref='chat_session', lazy='dynamic')
     messages = db.relationship('Message', back_populates='chat_session', lazy='dynamic', cascade='all, delete-orphan')
 
     def __init__(self, user1_id, user2_id):
-        # Ensure that the current user is always user1
         self.user1_id, self.user2_id = (user1_id, user2_id) if user1_id == current_user.id else (user2_id, user1_id)
 
-    # Method to retrieve all messages for a chat session
     def get_messages(self):
         return Message.query.filter_by(chat_session_id=self.id).order_by(Message.created_at.asc())
-        # Create a new chat session
-        #chat_session = ChatSession(sender_id=1, receiver_id=2)
-        #db.session.add(chat_session)
-        #db.session.commit()
 
-        # Add a message to the chat session
-        #message = Message(sender_id=1, receiver_id=2, content="Hello!")
-        #chat_session.messages.append(message)
-        #db.session.commit()
-
-# Follower model to store user followers and following
-# Many-to-many relationship with User model (Each user can follow multiple users and be followed by multiple users)
 class Follower(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     follower_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -237,7 +210,6 @@ class Follower(db.Model):
         db.session.delete(self) if self else db.session.add(self)
         db.session.commit()
 
-# Follow model to store user followers and following
 class Follow(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     follower_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -246,8 +218,7 @@ class Follow(db.Model):
     def __init__(self, follower_id, followed_id):
         self.follower_id = follower_id
         self.followed_id = followed_id
-# Comment model to store user comments on posts
-# Many-to-one relationship with Post model (Each post can have multiple comments)
+
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(255), nullable=False)
@@ -260,8 +231,6 @@ class Comment(db.Model):
         self.user_id = user_id
         self.post_id = post_id
 
-# Like model to store user likes on posts
-# Many-to-one relationship with Post and User models (Each post can have multiple likes and each user can like multiple posts)
 class Like(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -279,8 +248,6 @@ class Notification(db.Model):
     created_at = db.Column(db.TIMESTAMP, default=db.func.current_timestamp())
     is_read = db.Column(db.Boolean, default=False)
 
-    # Additional fields to store specific information about the notification
-    # For example, the post_id for like notifications, message_id for message notifications, etc.
     related_id = db.Column(db.Integer)
 
     def __init__(self, user_id, sender_id, notification_type, related_id):
