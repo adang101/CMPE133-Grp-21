@@ -32,7 +32,6 @@ def login_form():
         email = request.form['email']
         password = request.form['password']
         user = User.query.filter_by(email=email).first()
-        print(user.id)
         print('login triggered')
         if user is not None and user.check_password(password):
             login_user(user)

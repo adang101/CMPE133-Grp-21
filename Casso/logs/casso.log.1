@@ -1,0 +1,124 @@
+2023-12-09 12:52:27,051 ERROR: Exception on /login-request [POST] [in C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\flask\app.py:1414]
+Traceback (most recent call last):
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\app\routes.py", line 34, in login_form
+    user = User.query.filter_by(email=email).first()
+           ^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\flask_sqlalchemy\model.py", line 30, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\query.py", line 273, in __init__
+    self._set_entities(entities)
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\query.py", line 282, in _set_entities
+    self._raw_columns = [
+                        ^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\query.py", line 283, in <listcomp>
+    coercions.expect(
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1254, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2693, in _post_inspect
+    self._check_configure()
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2374, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4116, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4154, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[Post(post)]'. Original exception was: When initializing mapper Mapper[Post(post)], expression 'Like' failed to locate a name ('Like'). If this is a class name, consider adding this relationship() to the <class 'app.models.Post'> class after both dependent classes have been defined.
+2023-12-09 12:52:31,210 ERROR: Exception on /login-request [POST] [in C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\flask\app.py:1414]
+Traceback (most recent call last):
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\app\routes.py", line 34, in login_form
+    user = User.query.filter_by(email=email).first()
+           ^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\flask_sqlalchemy\model.py", line 30, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\query.py", line 273, in __init__
+    self._set_entities(entities)
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\query.py", line 282, in _set_entities
+    self._raw_columns = [
+                        ^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\query.py", line 283, in <listcomp>
+    coercions.expect(
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1254, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2693, in _post_inspect
+    self._check_configure()
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2374, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4116, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4154, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[Post(post)]'. Original exception was: When initializing mapper Mapper[Post(post)], expression 'Like' failed to locate a name ('Like'). If this is a class name, consider adding this relationship() to the <class 'app.models.Post'> class after both dependent classes have been defined.
+2023-12-09 12:55:27,069 ERROR: Exception on /sign-up-request [POST] [in C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\flask\app.py:1414]
+Traceback (most recent call last):
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\app\routes.py", line 61, in sign_up_form
+    verify_username = User.query.filter_by(username=new_user).first()
+                      ^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\flask_sqlalchemy\model.py", line 30, in __get__
+    return cls.query_class(
+           ^^^^^^^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\query.py", line 273, in __init__
+    self._set_entities(entities)
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\query.py", line 282, in _set_entities
+    self._raw_columns = [
+                        ^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\query.py", line 283, in <listcomp>
+    coercions.expect(
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\sql\coercions.py", line 406, in expect
+    insp._post_inspect
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 1254, in __get__
+    obj.__dict__[self.__name__] = result = self.fget(obj)
+                                           ^^^^^^^^^^^^^^
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2693, in _post_inspect
+    self._check_configure()
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\mapper.py", line 2374, in _check_configure
+    _configure_registries({self.registry}, cascade=True)
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4116, in _configure_registries
+    _do_configure_registries(registries, cascade)
+  File "C:\Repos\CMPE133-Grp-21\Casso\newvenv\Lib\site-packages\sqlalchemy\orm\mapper.py", line 4154, in _do_configure_registries
+    raise e
+sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[Post(post)]'. Original exception was: When initializing mapper Mapper[Post(post)], expression 'Like' failed to locate a name ('Like'). If this is a class name, consider adding this relationship() to the <class 'app.models.Post'> class after both dependent classes have been defined.
+2023-12-09 13:08:59,166 INFO: Casso startup [in C:\Repos\CMPE133-Grp-21\Casso\app\__init__.py:60]

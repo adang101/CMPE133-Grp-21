@@ -123,8 +123,6 @@ class Post(db.Model):
 
     def image_url(self):
         return url_for('static', filename=f'images/userPosts/{self.image}')
-    
-    likes = db.relationship('Like', backref='post', lazy='dynamic')
 
 class CommissionRequest(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -219,7 +217,7 @@ class Follow(db.Model):
         self.follower_id = follower_id
         self.followed_id = followed_id
 
-class Comment(db.Model):
+'''class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(255), nullable=False)
     timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -229,18 +227,18 @@ class Comment(db.Model):
     def __init__(self, text, user_id, post_id):
         self.text = text
         self.user_id = user_id
-        self.post_id = post_id
+        self.post_id = post_id'''
 
-class Like(db.Model):
+'''class Like(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
 
     def __init__(self, user_id, post_id):
         self.user_id = user_id
-        self.post_id = post_id
+        self.post_id = post_id'''
 
-class Notification(db.Model):
+'''class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     sender_id = db.Column(db.Integer)
@@ -254,7 +252,7 @@ class Notification(db.Model):
         self.user_id = user_id
         self.sender_id = sender_id
         self.notification_type = notification_type
-        self.related_id = related_id
+        self.related_id = related_id'''
 
 # Create all tables in the engine. This is equivalent to "Create Table"
 #metadata = MetaData()
