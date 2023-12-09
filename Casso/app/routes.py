@@ -34,7 +34,7 @@ def login_form():
         user = User.query.filter_by(email=email).first()
         print(user.id)
         print('login triggered')
-        if user is not None:
+        if user is not None and user.check_password(password):
             login_user(user)
             return render_template('index.html')
         else:
