@@ -16,17 +16,22 @@
   <div class="untree_co-section untree_co-section-4 pb-0"  id="portfolio-section">
     <div class="container">
       <div class="portfolio-single-wrap unslate_co--section" id="portfolio-single-section">
-
         <div class="portfolio-single-inner">
           <h2 class="heading-portfolio-single-h2 text-black">Login</h2>
-      
           <!-- Main body -->
-          <!--<div class="untree_co-section" id="contact-section">-->
             <div class="container">
-              
               <!-- Login Form -->
               <div class="row">
                 <div class="col-lg-6">
+                  {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                      {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                          {{ message }}
+                        </div>
+                      {% endfor %}
+                    {% endif %}
+                  {% endwith %}
                   <!-- Form -->
                   <form method="POST" action="login-request">
                     <div class="form-group">

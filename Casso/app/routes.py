@@ -1,4 +1,4 @@
-from flask import render_template, Blueprint, request, redirect, url_for, flash, get_flashed_messages, current_app as app, jsonify, abort, send_from_directory
+from flask import render_template, Blueprint, request, redirect, url_for, flash, get_flashed_messages, current_app as app, jsonify, abort, send_from_directory, sessions
 from flask_login import login_required, login_user, logout_user, current_user
 from .models import User, db, Post, Message, ChatSession, CommissionRequest, Follow, Payment
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -8,8 +8,12 @@ from werkzeug.utils import secure_filename
 import requests
 
 bp = Blueprint('main', __name__)
-
-# Define views (routes) for your application
+@bp.after_request
+def add_security_headers(response):
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    return response
 
 # Path to landing page (index.html)
 @bp.route('/')
@@ -25,29 +29,16 @@ def login():
 @bp.route('/login-request', methods=['POST'])
 def login_form():
     if request.method == 'POST':
-        # Get username and password from form
         email = request.form['email']
         password = request.form['password']
-
-        # Query the database to get the user with the username
         user = User.query.filter_by(email=email).first()
-
-        # Check if the user exists in the database
+        print(user.id)
+        print('login triggered')
         if user is not None:
-            # If user exists, check if the password matches
-            if user.password == password:
-                # If password matches, log in user and being user session
-                flash('You were successfully logged in!')
-                login_user(user)
-
-                return render_template('index.html', messages=get_flashed_messages())
-            else:
-                # If password does not match, display message
-                flash('Incorrect password. Please try again.')
-                return render_template('login.html', messages=get_flashed_messages())
+            login_user(user)
+            return render_template('index.html')
         else:
-            # If email does not exist, display message
-            flash('Email does not exist. Please try again.')
+            flash('Incorrect email or password. Please try again.', 'error')
             return render_template('login.html', messages=get_flashed_messages())
 
 # Path to sign up page (sign-up.html)
@@ -82,12 +73,10 @@ def sign_up_form():
             flash('Full name already exists. Please try again.')
             return render_template('sign-up.html', messages=get_flashed_messages())
 
-        # Check if email is in a valid format
         if not re.match(r"[^@]+@[^@]+\.[^@]+", request.form['email']):
             flash('Email is not in a valid format. Please enter a valid email address.')
             return render_template('sign-up.html', messages=get_flashed_messages())
         
-        # Check if password and check password fields match
         if new_password != check_password:
             flash('Passwords do not match. Please try again.')
             return render_template('sign-up.html', messages=get_flashed_messages())
@@ -97,28 +86,18 @@ def sign_up_form():
             full_name = request.form['full-name'],
             username = request.form['username'],
             email = request.form['email'],
-            password = request.form['password'])
-        
-        # Add new user to database
+            password=request.form['password'])
+        new_user.set_password(request.form['password'])
+
         db.session.add(new_user)
         db.session.commit()
 
-        # Check if the new user was added to the database
         verify_user = User.query.filter_by(email=request.form['email']).first()
         if verify_user is not None:
-            # If user was added, display success message
             flash('Your account was successfully created!')
-            # Create a ChatSession between the admin and the new user
-            '''admin = User.query.filter_by(username='Casso Admin').first()
-            new_user_chat_session = ChatSession(user1_id=admin.id, user2_id=new_user.id)
-            db.session.add(new_user_chat_session)
-            db.session.commit()'''
-            # Redirect to login page
             return render_template('login.html', messages=get_flashed_messages())
         else:
-            # If user was not added, display message
             flash('There was an error creating your account. Please try again.')
-            # Redirect to sign up page
             return render_template('sign-up.html', messages=get_flashed_messages())
 
 # Path to Profile view (profile.html) - Requires user to be logged in

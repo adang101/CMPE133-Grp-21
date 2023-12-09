@@ -4,8 +4,9 @@ from sqlalchemy import create_engine
 from sqlalchemy import MetaData, Table, Column, Integer, String, ForeignKey
 from datetime import datetime
 from flask_login import UserMixin, current_user
-from flask import url_for
+from flask import url_for, session
 from flask_migrate import Migrate
+from werkzeug.security import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
@@ -18,7 +19,7 @@ class User(UserMixin, db.Model):
     full_name = db.Column(db.String(80), nullable=False)
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(EmailType, unique=True, nullable=False)
-    password = db.Column(db.String(60), nullable=False)
+    password = db.Column(db.String(60))
     biography = db.Column(db.String(255))
     profile_picture = db.Column(db.String(255), default='default.jpg')
 
@@ -30,6 +31,13 @@ class User(UserMixin, db.Model):
         self.password = password
         self.biography = biography
         self.profile_picture = profile_picture
+
+    def set_password(self, password):
+        self.password = generate_password_hash(password, method='sha256')
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+    
     def get_id(self): 
         return super().get_id()    
     def get(user_id):
