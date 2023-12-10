@@ -3,6 +3,8 @@ from flask_login import LoginManager
 from app import create_app
 from app.models import User
 import os
+import sys
+sys.path.insert(0, '/Casso/app')
 
 app = create_app()
 
@@ -16,6 +18,7 @@ login_manager.init_app(app)
 @login_manager.user_loader
 def load_user(user_id):
     return User.get(user_id)
+
 
 # Path to landing page (index.html)
 @app.route('/')
