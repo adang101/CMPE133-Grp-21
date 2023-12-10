@@ -1,6 +1,7 @@
 from flask import render_template
 from flask_login import LoginManager
 from app import create_app
+from app.models import User
 import os
 
 app = create_app()
@@ -14,10 +15,7 @@ login_manager.init_app(app)
 # User Loader
 @login_manager.user_loader
 def load_user(user_id):
-    from app.models import User
     return User.get(user_id)
-
-from app.models import User
 
 # Path to landing page (index.html)
 @app.route('/')
