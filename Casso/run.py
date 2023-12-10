@@ -1,10 +1,10 @@
+import sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'app'))
 from flask import render_template
 from flask_login import LoginManager
 from app import create_app
 from app.models import User
 import os
-import sys
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'app'))
 
 app = create_app()
 
