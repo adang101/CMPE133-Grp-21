@@ -22,7 +22,7 @@ from app.models import User
 # Path to landing page (index.html)
 @app.route('/')
 def index():
-    return render_template('/')
+    return render_template('index.html')
 
 if __name__ == '__main__':
     app.run(debug=False) # Set debug to False when deploying to production
