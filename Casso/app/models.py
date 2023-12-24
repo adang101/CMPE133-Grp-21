@@ -172,7 +172,6 @@ class Message(db.Model):
 
     sender = db.relationship('User', foreign_keys=[sender_id], backref='sent_messages', overlaps="sent_messages")
     receiver = db.relationship('User', foreign_keys=[receiver_id], backref='received_messages', overlaps="sent_messages")
-    chat_session_id = db.Column(db.Integer, db.ForeignKey('chat_session.id'))
     chat_session = db.relationship('ChatSession', back_populates='messages')
 
     def __init__(self, sender_id, receiver_id, content, chat_session_id, file_path=None):
