@@ -4,7 +4,9 @@ from flask_migrate import Migrate
 import os
 
 def create_app():
-    app = Flask("Casso", template_folder='templates', static_folder='static')
+    template_dir = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(__file__))), 'templates')
+    print("Template directory:", template_dir)
+    app = Flask("Casso", template_folder=template_dir, static_folder='static')
     migrate = Migrate(app, db)
 
     print("Current working directory:", os.getcwd())
