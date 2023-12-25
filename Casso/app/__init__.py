@@ -7,6 +7,7 @@ def create_app():
     app = Flask("Casso", template_folder='templates', static_folder='static')
     migrate = Migrate(app, db)
 
+    print("Current working directory:", os.getcwd())
     # Database configuration (if you are using a database)
     db_path = os.path.join(os.path.dirname(__file__), '..', 'Casso_database.db')
     app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
