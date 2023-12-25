@@ -18,12 +18,5 @@ def load_user(user_id):
 
 from app.models import User
 
-# Path to landing page (index.html)
-@app.route('/')
-def index():
-    # debugging
-    print("index")
-    return render_template('/')
-
 if __name__ == '__main__':
     app.run(debug=False)
