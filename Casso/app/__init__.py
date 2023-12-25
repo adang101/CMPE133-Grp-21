@@ -4,7 +4,7 @@ from flask_migrate import Migrate
 import os
 
 def create_app():
-    app = Flask("Casso")
+    app = Flask("Casso", template_folder='templates')
     migrate = Migrate(app, db)
 
     # Database configuration (if you are using a database)

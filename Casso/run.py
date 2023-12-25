@@ -21,7 +21,6 @@ from app.models import User
 # Path to landing page (index.html)
 @app.route('/')
 def index():
-    # debugging
     print("index")
     return render_template('index.html')
 
