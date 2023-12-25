@@ -14,6 +14,7 @@ bp = Blueprint('main', __name__)
 # Path to landing page (index.html)
 @bp.route('/')
 def index():
+    print("route index")
     return render_template('index.html')
 
 # Path to login page (login.html)
